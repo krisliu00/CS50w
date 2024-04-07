@@ -1,0 +1,44 @@
+<!D0CTYPE html>
+<html>
+    <head>
+        <title>Git Bash Command</title>
+    <style>
+        ol >li{
+            color: cornflowerblue;
+        }    
+        </style> 
+    </head>
+    <body>
+        <ol>
+            <li>General</li>
+            <ul>
+                <li>xxdir 前往某个目录下</li>
+                <li>cd .. 返回上级目录</li> 
+                <li>ls 列出目录里的文件</li>
+                <li>cat xxfile 显示xxfile里的内容</li>
+                <li>pwd 显示当前目录的路径</li>
+                <li>history显示所有用过的command</li>
+                <li>mv xxfile newnamefile 改文件名</li>
+                <li>rm -rf xxdiv 删除某个目录</li>
+                <li>touch xxfile 新增xx文件</li>
+            </ul>
+            <li>Repository</li>
+            <ul>
+                <li>git clone xxURL  从GitHub上copy需要clone的url下载到本地</li>
+                <li>git add xxfile 把xxfile更新到缓存区</li>
+                <li>git commit -m “some messages” 确认所有更新</li>
+                <li>git commit -am “some messages” 更新到缓存和确认一次性完成</li>
+                <li>git pull 把GitHub上的更新下载到本地</li>
+                <li>git push 把本地的更新上传到GitHub上</li>
+            </ul>
+            <li>Branch</li>
+            <ul>
+                <li>git checkout xxbranch 转到xxbranch上</li>
+                <li>git push -set-upstream origin xx branch 把本地的branch推送到GitHub上</li>
+                <li>git fetch + git merge = git pull</li>
+                <li>git merge xxbranch 把xxbranch和main的内容合并</li>
+                <li>git log 显示commit的数量和内容 q退出</li>
+            </ul>
+        </ol>
+    </body>
+</html>  
