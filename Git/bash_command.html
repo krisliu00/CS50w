@@ -3,12 +3,16 @@
     <head>
         <title>Git Bash Command</title>
     <style>
+        h1{
+            text-align:center
+        }
         ol >li{
             color: cornflowerblue;
         }    
         </style> 
     </head>
     <body>
+        <h1>Git Bash Commands</h1>
         <ol>
             <li>General</li>
             <ul>
@@ -21,10 +25,13 @@
                 <li>mv xxfile newnamefile 改文件名</li>
                 <li>rm -rf xxdiv 删除某个目录</li>
                 <li>touch xxfile 新增xx文件</li>
+                <li>mkdir xxname 创建新文件夹xxname</li>
+                <li>git mv xxfile xxfolder/ 把xxfile移动到xxfolder里</li>
             </ul>
             <li>Repository</li>
             <ul>
                 <li>git clone xxURL  从GitHub上copy需要clone的url下载到本地</li>
+                <li>git config --get remote.origin.url 查看GitHub的url</li>
                 <li>git add xxfile 把xxfile更新到缓存区</li>
                 <li>git commit -m “some messages” 确认所有更新</li>
                 <li>git commit -am “some messages” 更新到缓存和确认一次性完成</li>
