@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>Git Bash Command</title>
-        <link rel="stytlesheet" href="/Git/style.css">
+        <link rel="stylesheet" href="../HTML/style.css">
     </head>
     <body>
         <h1>Git Bash Commands</h1>
@@ -20,6 +20,7 @@
                 <li>touch xxfile 新增xx文件</li>
                 <li>mkdir xxname 创建新文件夹xxname</li>
                 <li>git mv xxfile xxfolder/ 把xxfile移动到xxfolder里</li>
+                <li>../ ../../ link里的文件地址上层文件夹或上上层文件夹</li>
             </ul>
             <li>Repository</li>
             <ul>
@@ -27,9 +28,9 @@
                 <li>git config --get remote.origin.url 查看GitHub的url</li>
                 <li>git add xxfile 把xxfile更新到缓存区</li>
                 <li>git commit -m “some messages” 确认所有更新</li>
-                <li>git commit -am “some messages” 更新到缓存和确认一次性完成</li>
+                <li>git add --all && git commit -m "comment" 更新缓存一次性完成，包括所有文件</li>
                 <li>git pull 把GitHub上的更新下载到本地</li>
-                <li>git push 把本地的更新上传到GitHub上</li>
+                <li>git push 把本地的更新上传到GitHub上 git push -f 强制更新remote</li>
             </ul>
             <li>Branch</li>
             <ul>
@@ -38,6 +39,11 @@
                 <li>git fetch + git merge = git pull</li>
                 <li>git merge xxbranch 把xxbranch和main的内容合并</li>
                 <li>git log 显示commit的数量和内容 q退出</li>
+            </ul>
+            <li>Flask</li>
+            <ul>
+                <li>flask --app hello run 在python里运行flask app hello.py</li>
+            </ul>
             </ul>
         </ol>
     </body>

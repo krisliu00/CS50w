@@ -1,0 +1,37 @@
+<!D0CTYPE html>
+<html>
+    <head>
+        <title>Git Bash Command</title>
+        <link rel="stylesheet" href="../static/flash_style.css">
+    </head>
+    <body>
+        <h1>Git Bash Command</h1>
+        <ol>
+            <li>General</li>
+            <ul>
+                {% for GeneralContent in GeneralContent %}
+                  <li>{{GeneralContent}}</li>
+            {%endfor%}
+            </ul>
+            <li>Repository</li>
+            <ul>
+                {% for RepositoryContent in RepositoryContent %}
+                  <li>{{RepositoryContent}}</li>
+            {%endfor%}
+            </ul>
+            <li>Branch</li>
+            <ul>
+                {% for BranchContent in BranchContent %}
+                  <li>{{BranchContent}}</li>
+            {%endfor%}
+            </ul>
+            <li>Flask</li>
+            <ul>
+                {% for FlaskContent in FlaskContent %}
+                  <li>{{FlaskContent}}</li>
+            {%endfor%}
+            </ul>
+            
+        </ol>
+    </body>
+</html>  

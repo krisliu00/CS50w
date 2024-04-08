@@ -1,0 +1,12 @@
+h1{
+  color:royalblue;
+  text-align: center;
+}
+ol > li {
+  color: rgb(39, 128, 184);
+  font-size: medium;
+  font-weight: bolder;
+}
+li{
+  margin-top: 5px;
+}
