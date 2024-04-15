@@ -47,15 +47,26 @@
             </ul>
             <li>Django</li>
             <ul>
-                <li>新建程序步骤：
-                    django-admin startproject xxproject *自动建一个项目文件夹
-                    找到setting.py, 把'xxproject',添加到installed_apps里
-                </li>
-                <li>manage.py startapp xx</li>
+                <dl>
+                    <li><dt>新建程序步骤：</dt><br>
+                    <dd>django-admin startproject xxproject *自动建一个项目文件夹</dd>
+                    <dd>python manage.py runserver 运行server</dd>
+                    <dd>manage.py startapp xx 建一个新的app 'xx'</dd>
+                    <dd>找到setting.py, 把新的app'xx',添加到installed_apps里</dd>
+                    <dd>views.py 建一个新的def, 把return后面的功能（比如request，或者httpresponse）import到文件里
+                        在对应app文件夹下建一个urls.py（注意一个project可以有几个app，每个app都可以有对应的urls文件）</dd>
+                    <dd>urls.py 里建新的urlpattern， 注意要import上一步创建好的views, .的意思是当前文件夹</dd>
+                    <dd>到上一级的文件夹里找总的urls.py文件，把上一步的urls文件include到urlpattern里，然后import include</dd>
+                    </li>
+                    
+                    
+                    
+                </dl>
             </ul>
             <li>HTML&CSS</li>
             <ul>
                 <li>在文本里加空白空间&nbsp</li>
+                <li>文本空一行用br</li>
             
             </ul>
 
