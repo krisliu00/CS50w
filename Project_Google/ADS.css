@@ -1,0 +1,113 @@
+body {
+background-color: rgb(29, 28, 28);
+}
+h1 {
+color: aliceblue;
+font-family: "Raleway";
+font-size: 25px;
+font-weight: 500;
+}
+a:link {
+color: aliceblue;
+background-color: transparent;
+text-decoration: none;
+}
+a:hover {
+color: aliceblue;
+background-color: transparent;
+text-decoration: none;
+}
+a:visited {
+color: aliceblue;
+background-color: transparent;
+text-decoration: none;
+}
+h2 {
+font-family: "Raleway";
+color: indianred;
+font-size: 20px;
+font-weight: 600;
+margin-top: 45px;
+margin-left: 28px;
+}
+h2:after {
+content: " ";
+display: block;
+border: 0.001mm solid rgb(37, 36, 36);
+margin-top: 22px;
+margin-left: -28px;
+}
+h3{
+    color: aliceblue;
+    margin-left: 28px;
+    font-size: medium;
+    font-weight: 200;
+    margin-top: 40px;
+}
+#text{
+    font-size: 13px;
+    margin-left: 33%;
+    color: aliceblue;
+    font-weight: 550;
+}
+.searchbar{
+    display: flex;
+    
+    
+    margin: 25px;
+}
+.leftsidetext{
+   color: aliceblue;
+   width:fit-content;
+   font-weight: lighter;
+   font-size: small;
+   opacity: 0.75;
+   margin-top: 5px;
+}
+.bar{
+    margin-left: 26px;
+    
+}
+#bar1, #bar2, #bar3, #bar4{
+    width: 550px;
+    height: 25px;
+    background: transparent;
+    border: 1px solid;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+#bar2, #bar3, #bar4{
+    margin-top: 20px;
+    
+}
+.rightsidetext{
+    color: aliceblue;
+    margin-left: 20px;
+    font-weight: lighter;
+    font-size: small;
+    opacity: 0.75;
+    margin-top: 5px;
+}
+input, select, textarea{
+    color: aliceblue;
+    outline: none;
+    border:1px solid;
+}
+input:focus{
+    outline: 0.5px inset #4193eb;
+}
+.button{
+    position: relative;
+    top: 50%;
+    left: 33%;
+    border: none;
+    border-radius: 4px;
+    color: rgb(0, 0, 0);
+    padding: 10px 13px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 13px;
+    cursor: pointer;
+    background-color:rgb(117, 142, 219);
+    font-weight: 500;
+}

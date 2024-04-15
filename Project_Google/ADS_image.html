@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+      <title>Advanced Search</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="ADS.css">
+</head>
+<body>
+      <a href="google.html"><h1>Google</h1></a>
+      <h2>Advanced Image Search</h2>
+      <h3>Find pages with...<span id="text">To do this in the search box</span></h3>
+
+<form id="form" action="https://google.com/search">
+<div class="searchbar">
+    <div class="leftsidetext">
+        <label for="bar1">all these words:</label><br><br><br>
+        <label for="bar2">this exact word or phrase:</label><br><br><br>
+        <label for="bar3">any of these words:</label><br><br><br>
+        <label for="bar4">none of these words:</label>
+    </div>
+    <div class="bar">
+        <input id="bar1" type="text" name="as_q"><br>
+        <input id="bar2" type="text" name="as_epq"><br>
+        <input id="bar3" type="text" name="as_oq"><br>
+        <input id="bar4" type="text" name="as_eq">
+        <input type="hidden" name="tbm" value="isch">
+    </div>
+    <div class="rightsidetext">
+        <label for="bar1">Type the important words:  winter hoarfrost</label><br><br><br>
+        <label for="bar2">Put exact words in quotes:  "frost flower"</label><br><br><br>
+        <label for="bar3">Type OR between all the words you want:  trees OR weeds OR grasses</label><br><br><br>
+        <label for="bar4">Put a minus sign just before words you don't want:  -windows</label>
+    </div>
+</div>
+</form>
+<button class="button" type="submit" form="form">Advanced Search</button>
+</body>
+</html>
