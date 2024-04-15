@@ -111,3 +111,6 @@ input:focus{
     background-color:rgb(117, 142, 219);
     font-weight: 500;
 }
+.button:hover{
+    background: rgb(145, 168, 238);
+}
