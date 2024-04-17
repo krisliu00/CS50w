@@ -12,19 +12,30 @@
         <div class="row">
             <div class="sidebar col-lg-2 col-md-3">
                 <h2>Wiki</h2>
-                <form>
-                    <input class="search" type="text" name="q" placeholder="Search Encyclopedia">
+                <form action="{% url 'search_results' %}" method="get">
+
+                <input class="search" type="text" name="q" placeholder="Search Encyclopedia">
+                   
                 </form>
                 <div>
                     <a href="{% url 'index' %}">Home</a>
                 </div>
                 <div>
-                    Create New Page
+                    <a href="{% url 'CreateNewPage' %}">Create New Page</a>
                 </div>
                 <div>
-                    Random Page
+                    <a href="{% url 'WikiTour' %}">Random Page</a>  
                 </div>
                 {% block nav %}
+
+                <div>
+                <dl>
+                {% for entry in entries %}
+                <dt>{{ entry }}</dt>
+                {% endfor %}
+                </dl>
+                </div>
+                
                 {% endblock %}
             </div>
             <div class="main col-lg-10 col-md-9">

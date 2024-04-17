@@ -1,7 +1,8 @@
 import re
-
+from django.urls import reverse
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+import markdown2
 
 
 def list_entries():
@@ -11,7 +12,6 @@ def list_entries():
     _, filenames = default_storage.listdir("entries")
     return list(sorted(re.sub(r"\.md$", "", filename)
                 for filename in filenames if filename.endswith(".md")))
-
 
 def save_entry(title, content):
     """
@@ -35,3 +35,21 @@ def get_entry(title):
         return f.read().decode("utf-8")
     except FileNotFoundError:
         return None
+
+def convert_markdown_to_html(title):
+
+    file_path = f"entries/{title}.md"
+    with default_storage.open(file_path, 'r') as file:
+        content = file.read()
+
+    html_content = markdown2.markdown(content)
+
+    return html_content
+
+def url_entry():
+    from django.urls import reverse
+
+
+
+
+

@@ -1,0 +1,17 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Entries
+{% endblock %}
+
+{% block body %}
+<h1>{{ search_title }}</h1>
+
+{% if search_result %}
+    {{ search_result|safe }}
+{% else %}
+    {{ none }}
+{% endif %}
+
+
+{% endblock %}
