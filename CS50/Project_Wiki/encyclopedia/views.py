@@ -8,7 +8,7 @@ import markdown2
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
-        "entries": util.list_entries()
+        "entries": util.index()
        
     })
 
@@ -26,7 +26,7 @@ def CreateNewPage(request):
             })
 
     return render(request, "encyclopedia/CreateNewPage.html",{
-        "entries": util.list_entries(),
+        "entries": util.index(),
         "form": CreateNewPageForm()
         
     })  
@@ -42,7 +42,7 @@ def entry(request, title):
         return render(request, "encyclopedia/entry.html", {
             "mdconverted": mdconverted,
             "mdtitle" : title.upper(),
-            "entries": util.list_entries()
+            "entries": util.index()
     })
     
     if title.upper() not in entries:
@@ -68,7 +68,7 @@ def search(request):
         return render(request, "encyclopedia/search.html", {
             "search_result": util.convert_markdown_to_html(matched_entry),
             "search_title": matched_entry,
-            "entries": util.list_entries()
+            "entries": util.index()
             })
     
 def WikiTour(request):

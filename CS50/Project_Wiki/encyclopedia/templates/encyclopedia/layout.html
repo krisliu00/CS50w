@@ -29,13 +29,10 @@
                 {% block nav %}
 
                 <div>
-                <dl>
                 {% for entry in entries %}
-                <dt>{{ entry }}</dt>
+                <dl><a href="{{ entry.url }}">{{ entry.name }}</a><dl>
                 {% endfor %}
-                </dl>
                 </div>
-                
                 {% endblock %}
             </div>
             <div class="main col-lg-10 col-md-9">

@@ -49,7 +49,11 @@ def convert_markdown_to_html(title):
 def url_entry():
     from django.urls import reverse
 
-
+def index():
+    _, filenames = default_storage.listdir("entries")
+    entries = [re.sub(r"\.md$", "", filename).upper() for filename in filenames if filename.endswith(".md")]
+    entries_with_urls = [{"name": entry, "url": reverse("entry", kwargs={"title": entry})} for entry in entries]
+    return entries_with_urls
 
 
 
