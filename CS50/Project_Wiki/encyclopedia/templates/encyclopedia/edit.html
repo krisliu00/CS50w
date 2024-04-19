@@ -5,15 +5,16 @@
 {% endblock %}
 
 {% block body %}
-
+<div class="edithead">
 <h1>{{ title }}</h1>
-
-
+</div>
 
 <form id="Save_Content" action="{%url 'save' title=title %}" method="post">
     {% csrf_token %}
+    <div class="editbody">
     {{ form }}
-    <button type="submit" id="Save_Content" form="Save_Content">Save</button>
+    </div>
+    <button type="submit" id="Savehbutton" form="Save_Content">Save</button>
 </form>
 
 

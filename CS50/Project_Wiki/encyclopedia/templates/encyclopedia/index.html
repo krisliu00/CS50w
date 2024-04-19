@@ -5,14 +5,16 @@
 {% endblock %}
 
 {% block body %}
-    <h1>All Pages</h1>
-
+<div class="Index_head">
+    <h1>Welcome to Encyclopedia</h1>
+</div>
+<div class="Index_body">
     <ul>
         {% for entry in entries %}
-            <li><a href="{{ entry.url }}">{{ entry.name }}</a></li>
+            <li class="Index_list"><a href="{{ entry.url }}">{{ entry.name }}</a></li>
         {% endfor %}
     </ul>
-
+</div>
 {% endblock %}
 
 {% block nav %}

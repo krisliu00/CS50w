@@ -123,8 +123,8 @@ def Save(request, title):
 
 
 class CreateNewPageForm(forms.Form):
-    title = forms.CharField(widget=forms.Textarea(attrs={"rows":1, "cols":70, "placeholder":'Title'}))
-    content = forms.CharField(widget=forms.Textarea(attrs={"rows":25, "cols":70, "placeholder":'Type new content here'}))
+    title = forms.CharField(label='', widget=forms.Textarea(attrs={"rows":1, "cols":100, "placeholder":'Title'}))
+    content = forms.CharField(label='', widget=forms.Textarea(attrs={"rows":25, "cols":100, "placeholder":'Type new content here'}))
 
 
 

@@ -19,7 +19,7 @@ h1 {
 .search {
     width: 100%;
     font-size: 15px;
-    line-height: 15px;
+    line-height: 20px;
 }
 
 .sidebar {
@@ -30,4 +30,165 @@ h1 {
 
 .sidebar h2 {
     margin-top: 5px;
+}
+
+.Index_head {
+    position: relative;
+    margin-left: 30%;
+}
+.Index_head:after {
+    content: " ";
+    display: block;
+    border: 0.001mm solid rgb(37, 36, 36, 0.5);
+    margin-top: 22px;
+    margin-left: -43%;
+    font-weight: bold;
+    }
+.Index_body{
+    font-size: large;
+    font-family: 'Times New Roman', Times, serif;
+}
+.Index_list{
+    display: inline-block;
+    flex-wrap: wrap;
+    list-style: none;
+    width: auto;
+    margin-top: 30px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-bottom: 10px; 
+    margin-right: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+}
+a:link {    
+    color: #a4c5e7;
+    text-decoration: none; 
+    font-weight: normal;
+    background-color: transparent;
+  }
+a:visited{
+    color: #445a72;
+    text-decoration: none; 
+    font-weight: normal;
+    background-color: transparent;
+}
+a:hover{
+    color: #afd4f8;
+    text-decoration: solid; 
+    font-weight: normal;
+    background-color: transparent;
+
+}
+.homebutton, .CreateNewPage, .WikiTour{
+    margin-top: 20px;
+    background-color: #e7adad;
+    border-radius: 8px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    text-decoration: solid;
+}
+.barlist{
+    margin-top: 10px;
+    text-align: center;
+}
+.CreateNewPagehead{
+    position: relative;
+    margin-left: 30%;
+}
+
+.CreateNewPagehead:after {
+    content: " ";
+    display: block;
+    border: 0.001mm solid rgb(37, 36, 36, 0.5);
+    margin-top: 22px;
+    margin-left: -30%;
+    width: 1600px;
+    font-weight: bold;
+    }
+#submitbutton{
+    display: inline-block;
+    padding: 9px 18px;
+    background-color: #2387f3;
+    color: #fff;
+    font-size: 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 40%;
+}
+.form-group{
+    margin-top: 40px;
+    margin-left: 100px;
+}
+
+textarea, input[type="text"] {
+    width: 80%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    height: 80%;
+  }
+.entryhead{
+    position: relative;
+    margin-left: 35%;
+}
+.entryhead:after {
+    content: " ";
+    display: block;
+    border: 0.001mm solid rgb(37, 36, 36, 0.5);
+    margin-top: 22px;
+    margin-left: -54%;
+    font-weight: bold;
+    }
+.entrybody{
+    margin-top: 30px;
+    font-size:large;
+    font-family: 'Times New Roman', Times, serif;
+    margin-left: 30px;
+}
+
+#editbutton{
+    display: inline-block;
+    padding: 9px 18px;
+    background-color: #2387f3;
+    color: #fff;
+    font-size: 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 30px;
+    margin-top: 100px;
+}
+.edithead{
+    position: relative;
+    margin-left: 35%;
+}
+.edithead:after {
+    content: " ";
+    display: block;
+    border: 0.001mm solid rgb(37, 36, 36, 0.5);
+    margin-top: 22px;
+    margin-left: -54%;
+    font-weight: bold;
+    }
+.editbody{
+    margin-top: 40px;
+    margin-left: 100px;
+}
+#Savehbutton{
+    display: inline-block;
+    padding: 9px 18px;
+    background-color: #2387f3;
+    color: #fff;
+    font-size: 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 40%;
+    margin-top: 20px;
 }

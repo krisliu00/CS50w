@@ -17,20 +17,20 @@
                 <input class="search" type="text" name="q" placeholder="Search Encyclopedia">
                    
                 </form>
-                <div>
+                <div class="homebutton">
                     <a href="{% url 'index' %}">Home</a>
                 </div>
-                <div>
+                <div class="CreateNewPage">
                     <a href="{% url 'CreateNewPage' %}">Create New Page</a>
                 </div>
-                <div>
+                <div class="WikiTour">
                     <a href="{% url 'WikiTour' %}">Random Page</a>  
                 </div>
                 {% block nav %}
 
                 <div>
                 {% for entry in entries %}
-                <dl><a href="{{ entry.url }}">{{ entry.name }}</a><dl>
+                <dl class="barlist"><a href="{{ entry.url }}">{{ entry.name }}</a><dl>
                 {% endfor %}
                 </div>
                 {% endblock %}

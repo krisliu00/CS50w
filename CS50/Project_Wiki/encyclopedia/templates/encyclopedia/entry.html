@@ -5,17 +5,18 @@
 {% endblock %}
 
 {% block body %}
-
+<div class="entryhead">
 <h1>{{ mdtitle }}</h1>
-
+</div>
+<div class="entrybody">
 {{ mdconverted|safe }}
-
-
-
-<form id="editForm" method="post" action="{% url 'edit' title=mdtitle %}">
+</div>
+<div class="editbutton">
+<form id="editform" method="post" action="{% url 'edit' title=mdtitle %}">
     {% csrf_token %}
-    <button type="submit">Edit</button>
+    <button id="editbutton" type="submit" form="editform">Edit</button>
 </form>
+</div>
 
 
 

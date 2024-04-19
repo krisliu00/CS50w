@@ -5,11 +5,17 @@
 {% endblock %}
 
 {% block body %}
-    <h1><label for="title">Create A New Wiki Page</label></h1>
+    
+    <h1><label class="CreateNewPagehead" for="title">Create A New Wiki Page</label></h1>
+    
     <form id="addcontent" action="{%url 'CreateNewPage' %}" method="post">
         {% csrf_token %}
+    <div class="form-group" id="formtitle">
         {{ title }}
+    </div>
+    <div class="form-group" id="formbody">
         {{ form }}
+    </div>
 
     <button type="submit" id="submitbutton" form="addcontent">Submit</button>
 </form>
