@@ -1,5 +1,3 @@
-from urllib import request
-from django.shortcuts import render
 from django.urls import path
 # .的意思是当前文件夹
 from . import views, util
@@ -12,6 +10,8 @@ urlpatterns = [
     path("CreateNewPage", views.CreateNewPage, name="CreateNewPage"),
     path('WikiTour', views.WikiTour, name='WikiTour'),
     path('search/', views.search, name="search_results"),
+    path('<str:title>/edit/', views.Edit, name="edit"),
+    path('<str:title>/save/', views.Save, name="save"),
     path('<str:title>/', views.entry, name="entry")
     
 ]

@@ -6,6 +6,17 @@
 
 {% block body %}
 
+<h1>{{ mdtitle }}</h1>
+
 {{ mdconverted|safe }}
+
+
+
+<form id="editForm" method="post" action="{% url 'edit' title=mdtitle %}">
+    {% csrf_token %}
+    <button type="submit">Edit</button>
+</form>
+
+
 
 {% endblock %}

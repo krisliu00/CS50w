@@ -9,8 +9,14 @@
 
 {% if search_result %}
     {{ search_result|safe }}
+
 {% else %}
-    {{ none }}
+<h1>This entry is not included in Wiki, here're some possible results:</h1>
+<ul>
+    {% for suggestion in suggestions %}
+    <li><a href="{% url 'entry' suggestion %}">{{ suggestion }}</a></li>
+    {% endfor %}
+</ul>
 {% endif %}
 
 

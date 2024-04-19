@@ -1,6 +1,5 @@
 import random
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from . import util
 from django import forms
@@ -16,27 +15,30 @@ def CreateNewPage(request):
     if request.method == "POST":
         form = CreateNewPageForm(request.POST)
         if form.is_valid():
-            title = form.cleaned_data["title"]
-            content = form.cleaned_data["content"]
+            title = form.cleaned_data['title']
+            entries = [entry.upper() for entry in util.list_entries()]
+            if title.upper() in entries:
+                return render(request, "encyclopedia/CreatError.html")                 
+            else:
+                content = form.cleaned_data["content"]
             util.save_entry(title, content)
-            return HttpResponseRedirect(reverse("index"))
-        else:
-            return render(request, "encyclopedia/CreateNewPage.html", {
-                "form": form
-            })
-
-    return render(request, "encyclopedia/CreateNewPage.html",{
-        "entries": util.index(),
-        "form": CreateNewPageForm()
+            mdconverted = util.convert_markdown_to_html(title)
+            return render(request, "encyclopedia/entry.html", {
+                "mdtitle": title.upper(),
+                "mdconverted": mdconverted,
+                "entries": util.index()         
+            })           
+    else:
+        form = CreateNewPageForm()
+    
+    return render(request, "encyclopedia/CreateNewPage.html", {"form": form})
         
-    })  
 
 def entry(request, title):
-    
     entries = [entry.upper() for entry in util.list_entries()]
     
     if title.upper() in entries:
-
+        
         mdconverted = util.convert_markdown_to_html(title)
     
         return render(request, "encyclopedia/entry.html", {
@@ -47,6 +49,13 @@ def entry(request, title):
     
     if title.upper() not in entries:
         return render(request, "encyclopedia/error.html", {"entries": entries})
+    
+
+def SearchSuggestion(query):
+    entries = util.list_entries()
+    suggestions = [entry for entry in entries if query.upper() in entry.upper()]
+    return suggestions
+
     
 def search(request):
     if request.method == "GET":
@@ -62,8 +71,14 @@ def search(request):
 
         if matched_entry is None:
             
-            return render(request, "encyclopedia/error.html",{"entries": util.list_entries()
-                            })
+            suggestions = SearchSuggestion(search_query)
+            print("Search Query:", search_query)
+            print("Suggestions:", suggestions)
+
+            return render(request, "encyclopedia/search.html",{
+                "entries": util.index(),
+                "suggestions" : suggestions
+            })
 
         return render(request, "encyclopedia/search.html", {
             "search_result": util.convert_markdown_to_html(matched_entry),
@@ -79,13 +94,37 @@ def WikiTour(request):
 
     mdconverted = util.convert_markdown_to_html(title)
     return entry(request, title)
-        
-      
 
+def Edit(request, title):
+    initial_data = {
+        'title': title,
+        'content': util.get_entry(title)  
+    }
+
+    form = CreateNewPageForm(initial=initial_data)
+    return render(request, 'encyclopedia/edit.html', {'title': title, 'form': form})
+
+
+
+def Save(request, title):
+    if request.method == 'POST':
+        form = CreateNewPageForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            content = form.cleaned_data['content']
+            util.save_entry(title, content)
+            
+   
+            return redirect('entry', title=title)
+        else:
+
+            pass
+    
 
 
 class CreateNewPageForm(forms.Form):
     title = forms.CharField(widget=forms.Textarea(attrs={"rows":1, "cols":70, "placeholder":'Title'}))
     content = forms.CharField(widget=forms.Textarea(attrs={"rows":25, "cols":70, "placeholder":'Type new content here'}))
+
 
 
