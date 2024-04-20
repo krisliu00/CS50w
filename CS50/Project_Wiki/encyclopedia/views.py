@@ -70,19 +70,18 @@ def search(request):
                 break
 
         if matched_entry is None:
-            
-            suggestions = SearchSuggestion(search_query)
-            print("Search Query:", search_query)
-            print("Suggestions:", suggestions)
 
+            suggestions = SearchSuggestion(search_query)
+            suggestions = [suggestion.upper() for suggestion in suggestions]
+            
             return render(request, "encyclopedia/search.html",{
                 "entries": util.index(),
                 "suggestions" : suggestions
             })
 
-        return render(request, "encyclopedia/search.html", {
-            "search_result": util.convert_markdown_to_html(matched_entry),
-            "search_title": matched_entry,
+        return render(request, "encyclopedia/entry.html", {
+            "mdconverted": util.convert_markdown_to_html(matched_entry),
+            "mdtitle": matched_entry,
             "entries": util.index()
             })
     

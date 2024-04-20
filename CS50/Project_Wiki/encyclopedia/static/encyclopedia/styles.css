@@ -192,3 +192,40 @@ textarea, input[type="text"] {
     margin-left: 40%;
     margin-top: 20px;
 }
+.searchhead{
+ 
+    font-size: medium;
+}
+.searchhead:after {
+    content: " ";
+    display: block;
+    border: 0.001mm solid rgb(37, 36, 36, 0.5);
+    margin-top: 22px;
+    font-weight: bold;
+    }
+.searchitem{
+    display: inline-block;
+    flex-wrap: wrap;
+    list-style: none;
+    width: auto;
+    margin-top: 30px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-bottom: 10px; 
+    margin-right: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: large;
+    font-family: 'Times New Roman', Times, serif;
+}
+.searchentryhead{
+    position: relative;
+    margin-left: 35%;
+}
+
+.searentryentrybody{
+    margin-top: 30px;
+    font-size:large;
+    font-family: 'Times New Roman', Times, serif;
+    margin-left: 30px;
+}

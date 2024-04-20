@@ -5,16 +5,20 @@
 {% endblock %}
 
 {% block body %}
+<div class="searchentryhead">
 <h1>{{ search_title }}</h1>
-
+</div>
 {% if search_result %}
+<div class="searchentrybody">
     {{ search_result|safe }}
-
+</div>
 {% else %}
+<div class="searchhead">
 <h1>This entry is not included in Wiki, here're some possible results:</h1>
-<ul>
+</div>
+<ul class="searchlist">
     {% for suggestion in suggestions %}
-    <li><a href="{% url 'entry' suggestion %}">{{ suggestion }}</a></li>
+    <li class="searchitem"><a href="{% url 'entry' suggestion %}">{{ suggestion }}</a></li>
     {% endfor %}
 </ul>
 {% endif %}
