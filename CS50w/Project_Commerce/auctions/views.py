@@ -1,63 +1,31 @@
-from django.contrib.auth import authenticate, login, logout
-from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
-from django.urls import reverse
+from django.shortcuts import redirect, render
+from .models import ItemPictures
+from .forms import SellList
 
-from .models import User
 
+# Create your views here.
 
 def index(request):
     return render(request, "auctions/index.html")
 
 
-def login_view(request):
+def sell(request):
     if request.method == "POST":
+        form = SellList(request.POST, request.FILES)
 
-        # Attempt to sign user in
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
+        if form.is_valid():
+            
+            auction_list_instance = form.save()
 
-        # Check if authentication successful
-        if user is not None:
-            login(request, user)
-            return HttpResponseRedirect(reverse("index"))
-        else:
-            return render(request, "auctions/login.html", {
-                "message": "Invalid username and/or password."
-            })
+            images = request.FILES.getlist('image')
+            for image in images:
+                
+                ItemPictures.objects.create(auction_list=auction_list_instance, item_picture=image)
+
+            
+            return redirect('success_url')
     else:
-        return render(request, "auctions/login.html")
+        form = SellList()
+    return render(request, 'auctions/sell.html', {'form': form})
+             
 
-
-def logout_view(request):
-    logout(request)
-    return HttpResponseRedirect(reverse("index"))
-
-
-def register(request):
-    if request.method == "POST":
-        username = request.POST["username"]
-        email = request.POST["email"]
-
-        # Ensure password matches confirmation
-        password = request.POST["password"]
-        confirmation = request.POST["confirmation"]
-        if password != confirmation:
-            return render(request, "auctions/register.html", {
-                "message": "Passwords must match."
-            })
-
-        # Attempt to create new user
-        try:
-            user = User.objects.create_user(username, email, password)
-            user.save()
-        except IntegrityError:
-            return render(request, "auctions/register.html", {
-                "message": "Username already taken."
-            })
-        login(request, user)
-        return HttpResponseRedirect(reverse("index"))
-    else:
-        return render(request, "auctions/register.html")

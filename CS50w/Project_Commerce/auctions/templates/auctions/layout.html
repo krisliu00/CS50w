@@ -3,60 +3,15 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>{% block title %}Auctions{% endblock %}</title>
-        <link href="{% static 'auctions/css/styles.css' %}" rel="stylesheet">
+        <title>{% block title %}{% endblock %}</title>
+        <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         <div class="header-container"><img src="{% static 'auctions/img/Header.png' %}" alt="HeaderImage">
         </div>
-        <div class="sidenav">
-            <a href="#">Catalogue</a>
-            <a class="Catalogue" href="#">Fashion</a>
-            <a class="Catalogue" href="#">Furniture</a>
-            <a class="Catalogue" href="#">Electronics</a>
-            <a class="Catalogue" href="#">Accessories</a>
-            <a class="Catalogue" href="#">Toys</a>
-            <a class="Catalogue" href="#">Others</a>
-            <a href="#">Auction</a>
-            <a href="#">Watchlist</a>
-            <a href="#">Sell</a>
-          </div>
-          
-          <div class="ActiveList">
-            <h2>Sidenav Example</h2>
-            <p>This sidenav is always shown.</p>
-          </div>
-    </body>
-    
-
-    <div class="user">
-            {% if user.is_authenticated %}
-                Welcome, <strong>{{ user.username }}</strong>
-            {% else %}
-                Not signed in.
-            {% endif %}
-       
-        <ul class="nav">
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
-            </li>
-            {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
-                </li>
-            {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Log In</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'register' %}">Register</a>
-                </li>
-            {% endif %}
-        </ul>
-    </div>
-        
+        <hr>
         {% block body %}
         {% endblock %}
     </body>
