@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+from datetime import timedelta
 
 
 class AuctionList(models.Model):
@@ -14,11 +16,9 @@ class AuctionList(models.Model):
         ('others', 'Others')]
     
     category = models.CharField(max_length=20, choices=category_choices)
+    end_time = models.DateTimeField()
+    item_number = models.CharField(max_length=64)
       
-    
-class ItemPictures(models.Model):
-    auction_list = models.ForeignKey(AuctionList, on_delete=models.CASCADE, related_name='item_pictures')
-    item_picture = models.ImageField(upload_to='static/auctions/item_pictures')
 
 
 

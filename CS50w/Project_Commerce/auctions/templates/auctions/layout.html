@@ -4,14 +4,20 @@
 <html lang="en">
     <head>
         <title>{% block title %}{% endblock %}</title>
-        <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
+        <link href="{% static 'auctions/css/style.css' %}" rel="stylesheet">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <div class="header-container"><img src="{% static 'auctions/img/Header.png' %}" alt="HeaderImage">
+        <div class="header-container"><img src="{% static 'auctions/img/Header.png' %}" alt="Header Image">
         </div>
         <hr>
+        <div class="sidebar">
+            <a href="#home">Categories</a>
+            <a href="#news">Bidding</a>
+            <a href="#contact">Watchlist</a>
+            <a href="#about">MyAuction</a>
+          </div>
         {% block body %}
         {% endblock %}
     </body>

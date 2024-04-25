@@ -1,0 +1,67 @@
+.header-container {
+    margin-left: 7%; /* Set the left margin to 10px */
+}
+
+.header-container img {
+    width: 100%; /* Set the width of the image to 100% of the viewport width minus 10px for the left margin */
+    height: auto; /* Allow the height to adjust proportionally */
+    display: block; /* Ensure the image behaves as a block element */
+}
+
+/* .sidebar {
+box-sizing: border-box;
+height: 100vh;
+width: max-content;
+position: absolute;
+top: 0;
+left: 0;
+background-color: #111;
+padding-top: 60px;
+}
+
+.sidebar a {
+padding: 8px 8px 8px 10px;
+text-decoration: none;
+font-size: 25px;
+color: #818181;
+display: block;
+transition: 0.3s;
+}
+
+.sidebar a:hover {
+color: #f1f1f1;
+} */
+body {
+    margin: 0; /* Reset margin to zero */
+}
+
+.sellform {
+    /* width: 50%;  */
+    margin: 0 auto; 
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    
+}
+
+/* Style for form fields */
+.sellform input[type="text"],
+.sellform select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+/* Style for submit button */
+.sellform button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
