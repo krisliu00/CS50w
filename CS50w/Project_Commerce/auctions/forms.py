@@ -1,5 +1,7 @@
+from decimal import Decimal
 from django import forms
-from .models import AuctionList
+from django.core.exceptions import ValidationError
+from .models import AuctionList, Bidding
 
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
@@ -24,6 +26,7 @@ class SellList(forms.ModelForm):
     
     images = MultipleFileField(label='Upload Images', required=True)
     category = forms.ChoiceField(choices=AuctionList.category_choices)
+
     
     def clean_image(self):
         images = self.cleaned_data.get('images')
@@ -36,4 +39,27 @@ class SellList(forms.ModelForm):
         images = cleaned_data.get('images', [])
         if len(images) > 5:
             raise forms.ValidationError('You can upload a maximum of 5 pictures.')
+        return cleaned_data
+    
+
+class BiddingForm(forms.ModelForm):
+    
+    class Meta:
+        model = Bidding
+        fields = ['bid']
+
+    def clean_bid(self):
+        bid = self.cleaned_data.get('bid')
+        if bid is None:
+            return bid
+        if bid % Decimal('5') != Decimal('0'):
+            raise forms.ValidationError('Bid must be a multiple of 5.')
+        return bid
+
+    def clean(self):
+        cleaned_data = super().clean()
+        bid = cleaned_data.get('bid')
+        if bid is not None:
+            if bid >= Decimal('500'):
+                raise forms.ValidationError('Single bid must not exceed 500.00$')
         return cleaned_data

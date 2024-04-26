@@ -4,5 +4,67 @@
 
 
 {% block body %}
-{{ auctions }}
+<div class="item_set">
+    <div class="item_images">
+        {% for image in images %}
+            <img src="{{ MEDIA_URL }}items/{{ item_number }}/{{ image }}" alt="images">
+        {% endfor %}
+    </div>
+    <div>
+        <h3>Category</h3>
+            {% for obj in auctions %}
+            <tr>
+                <td>{{ obj.category }}</td> 
+            </tr>
+            {% endfor %}
+    </div>
+    <div>
+        <h4>Title</h4>
+        {% for obj in auctions %}
+            <tr>
+                <td>{{ obj.title }}</td> 
+            </tr>
+            {% endfor %}
+    </div>
+    <div>
+        <h4>Description</h4>
+            {% for obj in auctions %}
+            <tr>
+                <td>{{ obj.description }}</td> 
+            </tr>
+            {% endfor %}
+    </div>
+    <div><h4>Current Price</h4></div>
+            {% for obj in auctions %}
+            <tr>
+                <td>{{ obj.price }}</td> 
+            </tr>
+            {% endfor %}
+    </div>
+    <div>Endtime
+            {% for obj in auctions %}
+            <tr>
+                <td>{{ obj.end_time }}</td> 
+            </tr>
+            {% endfor %}
+    </div>
+    <div>
+        <form method="post">
+            {% csrf_token %}
+            {{ bidform.as_p }} 
+            {% if bidform.errors %}
+            <ol>
+                {% for error in bidform.errors %}
+                    <li><strong>{{ error|escape }}</strong></li>
+                {% endfor %}
+            </ol>
+            {% endif %}
+         <button type="submit">Place a bid!</button>
+        </form>
+    </div>
+</div>
+<div class="bidding"></div>
+<div class="bid_comment">
+    
+</div>
 {% endblock %}

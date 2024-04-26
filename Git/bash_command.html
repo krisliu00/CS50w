@@ -64,7 +64,17 @@
                     <li>改css文件没反应用ctrl + F5略过缓存</li>
                     <li>run migrations after making changes to your models python manage.py migrate</li>
                     <li>title() 返回一个字符串的副本，其中所有单词的第一个字符都被大写，而字符串方法 capitalize() 返回一个字符串的副本，其中只有整个字符串的第一个单词被大写。</li>
-                    
+                    <li><dt>用meidad的步骤：</dt><br>
+                        <dd>在django中启用media文件夹储存图片，首先在项目文件夹下面建media文件夹</dd>
+                        <dd>在setting.py里改1）TEMPLATES下'context_processors'加上'django.template.context_processors.media'</dd>
+                        <dd>2)加上MEDIA_URL = '/media/'
+                            MEDIA_ROOT = os.path.join(BASE_DIR, 'media')</dd>
+                        <dd>urls.py里加上urlpatterns = [
+                            。。。。
+                        ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)</dd>
+                        <dd>最后template里url如下{{ MEDIA_URL }}items/{{ item_number }}/{{ image }}</dd>
+
+                    </li>
                     
                     
                 </dl>
