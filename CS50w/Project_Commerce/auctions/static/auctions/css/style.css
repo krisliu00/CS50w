@@ -3,9 +3,9 @@
 }
 
 .header-container img {
-    width: 100%; /* Set the width of the image to 100% of the viewport width minus 10px for the left margin */
-    height: auto; /* Allow the height to adjust proportionally */
-    display: block; /* Ensure the image behaves as a block element */
+    width: 100%;  
+    height: auto; 
+    display: block; 
 }
 
 /* .sidebar {
@@ -65,3 +65,7 @@ body {
     border-radius: 3px;
     cursor: pointer;
 }
+/* .item_images{
+    position: absolute;
+    right: 0;
+} */

@@ -1,8 +1,10 @@
+import os
 import uuid
-from django.shortcuts import redirect, render
+from django.conf import settings
+from django.shortcuts import get_object_or_404, redirect, render
 from .models import AuctionList
-from .forms import SellList
-from .util import save_images
+from .forms import SellList, BiddingForm
+from .util import save_images, current_price
 from datetime import timedelta
 from django.utils import timezone
 
@@ -36,9 +38,36 @@ def sell(request):
     return render(request, 'auctions/sell.html', {'form': form})
 
 def bidding(request, item_number):
+    auction_instance = get_object_or_404(AuctionList, item_number=item_number)
 
+    if request.method == "POST":
+        bidform = BiddingForm(request.POST)
+        if bidform.is_valid():
+            bidding_instance = bidform.save(commit=False)
+            bidding_instance.auction = auction_instance
+            bidding_instance.save()
+            return redirect('bidding', item_number=item_number)
+        if not bidform.is_valid():
+            return render(request, 'auctions/bidding.html', {
+        
+        'item_number': item_number, 
+
+        'bidform': bidform
+    })
+    else:
+        bidform=BiddingForm()
+    
     auctions = AuctionList.objects.filter(item_number=item_number)
+    folder_path = os.path.join(settings.MEDIA_ROOT, 'items', str(item_number))
+    image_filenames = os.listdir(folder_path)
+    bidform = BiddingForm()
+    print(bidform.errors)
+    
 
-    return render(request, 'auctions/bidding.html', {'auctions': auctions}) 
+    return render(request, 'auctions/bidding.html', {
+        'auctions': auctions, 
+        'item_number':item_number, 
+        'images':image_filenames, 
+        'bidform' :bidform}) 
              
 
