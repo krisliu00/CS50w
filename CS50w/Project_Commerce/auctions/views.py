@@ -2,9 +2,9 @@ import os
 import uuid
 from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect, render
-from .models import AuctionList
-from .forms import SellList, BiddingForm
-from .util import save_images, current_price
+from .models import AuctionList,Comments
+from .forms import SellList, BiddingForm, CommentForm
+from .util import save_images
 from datetime import timedelta
 from django.utils import timezone
 
@@ -39,35 +39,45 @@ def sell(request):
 
 def bidding(request, item_number):
     auction_instance = get_object_or_404(AuctionList, item_number=item_number)
+    bidform=BiddingForm()
+    commentform = CommentForm()
 
     if request.method == "POST":
-        bidform = BiddingForm(request.POST)
-        if bidform.is_valid():
-            bidding_instance = bidform.save(commit=False)
-            bidding_instance.auction = auction_instance
-            bidding_instance.save()
-            return redirect('bidding', item_number=item_number)
-        if not bidform.is_valid():
-            return render(request, 'auctions/bidding.html', {
+        if 'bid' in request.POST:
+            bidform = BiddingForm(request.POST)
+            if bidform.is_valid():
+                bidding_instance = bidform.save(commit=False)
+                if bidding_instance is not None:
+                    bidding_instance.auction = auction_instance
+                    bidding_instance.save()
+                    return redirect('bidding', item_number=item_number)
         
-        'item_number': item_number, 
-
-        'bidform': bidform
-    })
+        elif 'comment' in request.POST:
+            commentform = CommentForm(request.POST)
+            if commentform.is_valid():
+                comment_instance = commentform.save(commit=False)
+                if comment_instance is not None: 
+                    comment_instance.auction = auction_instance
+                    comment_instance.save()
+                    return redirect('bidding', item_number=item_number)
+        
     else:
-        bidform=BiddingForm()
+        pass
     
     auctions = AuctionList.objects.filter(item_number=item_number)
+    comments = Comments.objects.filter(auction=auction_instance)
     folder_path = os.path.join(settings.MEDIA_ROOT, 'items', str(item_number))
     image_filenames = os.listdir(folder_path)
-    bidform = BiddingForm()
-    print(bidform.errors)
     
-
     return render(request, 'auctions/bidding.html', {
         'auctions': auctions, 
         'item_number':item_number, 
         'images':image_filenames, 
-        'bidform' :bidform}) 
+        'bidform' :bidform,
+        'commentform': commentform,
+        'comments': comments
+        }) 
+        
+    
              
 

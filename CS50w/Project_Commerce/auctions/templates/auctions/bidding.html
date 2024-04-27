@@ -51,20 +51,27 @@
     <div>
         <form method="post">
             {% csrf_token %}
-            {{ bidform.as_p }} 
-            {% if bidform.errors %}
-            <ol>
-                {% for error in bidform.errors %}
-                    <li><strong>{{ error|escape }}</strong></li>
-                {% endfor %}
-            </ol>
-            {% endif %}
-         <button type="submit">Place a bid!</button>
+            {{ bidform.as_p }}           
+            <button type="submit">Place a bid!</button>
         </form>
     </div>
+    <div>
+        <form method="post">
+            {% csrf_token %}
+            {{ commentform.as_p }} 
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <div>
+        <h4>Comment</h4>
+        {% for comment in comments %}
+            <tr>
+                <td>{{ comment.comment }}</td> 
+            </tr>
+            {% endfor %}
+    </div>
 </div>
-<div class="bidding"></div>
-<div class="bid_comment">
+
     
 </div>
 {% endblock %}

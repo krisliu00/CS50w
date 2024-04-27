@@ -25,7 +25,9 @@ class Bidding(models.Model):
     bid = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
 
-
+class Comments(models.Model):
+    auction = models.ForeignKey(AuctionList, on_delete=models.CASCADE, related_name='comments')
+    comment = models.CharField(max_length=200, null=True, blank=True)
       
 
 
