@@ -1,7 +1,6 @@
 from decimal import Decimal
 from django import forms
-from django.core.exceptions import ValidationError
-from .models import AuctionList, Bidding
+from .models import AuctionList, Bidding, Comments
 
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
@@ -51,15 +50,44 @@ class BiddingForm(forms.ModelForm):
     def clean_bid(self):
         bid = self.cleaned_data.get('bid')
         if bid is None:
-            return bid
+            
+            return None
+        
         if bid % Decimal('5') != Decimal('0'):
             raise forms.ValidationError('Bid must be a multiple of 5.')
+        if bid > Decimal('500'):
+            raise forms.ValidationError('Single bid must not exceed 500.00$')
+        
         return bid
 
-    def clean(self):
-        cleaned_data = super().clean()
-        bid = cleaned_data.get('bid')
-        if bid is not None:
-            if bid >= Decimal('500'):
-                raise forms.ValidationError('Single bid must not exceed 500.00$')
-        return cleaned_data
+
+
+    # def clean(self):
+    #     cleaned_data = super().clean()
+    #     bid = cleaned_data.get('bid')
+    #     if bid is not None:
+    #         if bid >= Decimal('500'):
+    #             raise forms.ValidationError('Single bid must not exceed 500.00$')
+    #     return cleaned_data
+
+class CommentForm(forms.ModelForm):
+    
+    class Meta:
+        model = Comments
+        fields = ['comment']
+
+    def clean_comment(self):
+        comment = self.cleaned_data.get('comment')
+
+        if comment is None:
+            return None
+        
+        char_count = len(comment)
+        if char_count > 200:
+            raise forms.ValidationError('Please submit no more than 200 words')
+
+        return comment
+        
+
+        
+        

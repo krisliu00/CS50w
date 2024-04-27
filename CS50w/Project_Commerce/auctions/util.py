@@ -16,9 +16,10 @@ def save_images(images, item_number):
 def current_price(sender, instance, **kwargs):
     try:
         auction_item = AuctionList.objects.get(item_number=instance.auction.item_number)
-        current_price = instance.bid + auction_item.price
-        auction_item.price = current_price
-        auction_item.save()
+        if instance.bid is not None:
+            current_price = instance.bid + auction_item.price
+            auction_item.price = current_price
+            auction_item.save()
 
     except AuctionList.DoesNotExist:
         pass
