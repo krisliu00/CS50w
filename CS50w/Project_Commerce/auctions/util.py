@@ -1,15 +1,47 @@
+import glob
 from django.core.files.storage import default_storage
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from .models import Bidding, AuctionList
+from PIL import Image, ImageDraw, ImageFont
+from django.conf import settings
+import os
+from datetime import datetime
+from io import BytesIO
+from django.core.files.base import ContentFile
 
 def save_images(images, item_number):
     saved_image_paths = []
     for image in images:
+
+        img = Image.open(image)
+        img_resized = img.resize((320, 350))
+        img_bytes = BytesIO()
+        img_resized.save(img_bytes, format='PNG') 
+        img_file = ContentFile(img_bytes.getvalue())
         upload_path = f'items/{item_number}/{image.name}'
-        saved_path = default_storage.save(upload_path, image)
+        saved_path = default_storage.save(upload_path, img_file)
         saved_image_paths.append(saved_path)
     return saved_image_paths
+
+def delete_instance(item_number):
+    try:
+        instance = AuctionList.objects.get(item_number=item_number)
+        instance.delete()
+        return True
+    except AuctionList.DoesNotExist:
+        return False 
+    
+@receiver(post_delete, sender=AuctionList)
+def delete_auction_images(sender, instance, **kwargs):
+    item_number = instance.item_number
+    media_folder_path = os.path.join(settings.MEDIA_ROOT, 'items', str(item_number))
+    if os.path.exists(media_folder_path):
+        for filename in os.listdir(media_folder_path):
+            file_path = os.path.join(media_folder_path, filename)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        os.rmdir(media_folder_path)
 
 
 @receiver(post_save, sender=Bidding)
@@ -23,3 +55,68 @@ def current_price(sender, instance, **kwargs):
 
     except AuctionList.DoesNotExist:
         pass
+
+def format_timedelta(remaining_time):
+    total_seconds = remaining_time.total_seconds()
+    days_as_hours, remainder = divmod(total_seconds, 3600 * 24)
+    hours, remainder = divmod(remainder, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    hours += days_as_hours * 24
+    if seconds >= 60:
+        minutes += seconds // 60
+        seconds %= 60
+    
+    return f"{int(hours):02d}h:{int(minutes):02d}m:{int(seconds):02d}s"
+
+
+def index_image(item_number):
+    try:
+        auction_data = AuctionList.objects.get(item_number=item_number)
+    except AuctionList.DoesNotExist:
+        return None
+    
+    media_folder_path = os.path.join(settings.MEDIA_ROOT, 'items', str(item_number))
+    image_files = glob.glob(os.path.join(media_folder_path, '*.*'))
+    
+    item_image = Image.open(image_files[0])
+    
+    item_width, item_height = item_image.size
+    
+    white_image = Image.new('RGBA', (item_width, item_height), color=(255, 255, 255, 255))
+    draw = ImageDraw.Draw(white_image)
+    font = ImageFont.truetype("arial.ttf", 15)
+
+    end_time = auction_data.end_time.replace(tzinfo=None)
+    current_time = datetime.now()
+    remaining_time = end_time - current_time
+    formattd_remaining_time = format_timedelta(remaining_time)
+    texts = [f"Title: {auction_data.title}", f"Price: {auction_data.price}", f"Time Remaining: {formattd_remaining_time}"]
+
+    y_position = 10
+    x_position = 10  # Starting x position
+
+    for text in texts:
+        for c in text:
+            # Get the bounding box for the current character
+            draw.text((x_position, y_position), c, fill="black", font=font)
+            x_position += draw.textlength(c, font=font)  # Move x position for the next character
+        
+        
+        y_position += draw.textbbox((x_position, y_position), text, font=font)[3] - draw.textbbox((x_position, y_position), text, font=font)[1] + 10
+        x_position = 10
+
+    background_image = Image.new('RGBA', (item_width, item_height + y_position), color=(255, 255, 255, 255))
+    background_image.paste(item_image, (0, 0))
+    background_image.paste(white_image, (0, item_height))
+    
+
+    upload_path = f'index_images/{item_number}.png'
+    file_path = os.path.join(settings.MEDIA_ROOT, upload_path)
+    with default_storage.open(file_path, 'wb') as image_file:
+        background_image.save(image_file, format='PNG')
+
+    return upload_path
+
+
+
+    

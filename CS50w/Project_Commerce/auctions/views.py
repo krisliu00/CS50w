@@ -4,7 +4,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect, render
 from .models import AuctionList,Comments
 from .forms import SellList, BiddingForm, CommentForm
-from .util import save_images
+from .util import save_images, index_image
 from datetime import timedelta
 from django.utils import timezone
 
@@ -12,8 +12,18 @@ from django.utils import timezone
 # Create your views here.
 
 def index(request):
-    return render(request, "auctions/index.html")
+    fashion_data = AuctionList.objects.filter(category__in=['fashion'])
+    print('item_number')
 
+    image_paths = []
+    for item in fashion_data:
+
+        image_path = index_image(item.item_number)
+
+        if image_path:
+            image_paths.append(image_path)
+
+    return render(request, "auctions/index.html", {'image_paths': image_paths})
 
 def sell(request):
     if request.method == "POST":
@@ -78,6 +88,6 @@ def bidding(request, item_number):
         'comments': comments
         }) 
         
-    
+
              
 
