@@ -4,5 +4,7 @@
 
 
 {% block body %}
-
+{% for image_path in image_paths %}
+        <img src="{{ MEDIA_URL }}/{{ image_path }}" alt="Auction Image">
+    {% endfor %}
 {% endblock %}
