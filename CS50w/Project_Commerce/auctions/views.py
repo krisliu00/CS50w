@@ -12,16 +12,23 @@ from django.utils import timezone
 # Create your views here.
 
 def index(request):
-    fashion_data = AuctionList.objects.filter(category__in=['fashion'])
-    image_paths = []
-    for item in fashion_data:
+    categories = ['fashion', 'electronics', 'accessories', 'others']
+    combined_data = {}
 
-        image_path = index_image(item.item_number)
+    for category in categories:
+        category_data = AuctionList.objects.filter(category=category)
+        image_paths = []
+        item_numbers = []
+        for item in category_data:
+            image_path = index_image(item.item_number)
+            if image_path:
+                image_paths.append(image_path)
+                item_numbers.append(item.item_number)
+        combined_data[category] = list(zip(image_paths, item_numbers))
 
-        if image_path:
-            image_paths.append(image_path)
-
-    return render(request, "auctions/index.html", {'image_paths': image_paths})
+    return render(request, "auctions/index.html", {
+        'combined_data': combined_data
+        })
 
 def sell(request):
     if request.method == "POST":
