@@ -13,8 +13,6 @@ from django.utils import timezone
 
 def index(request):
     fashion_data = AuctionList.objects.filter(category__in=['fashion'])
-    print('item_number')
-
     image_paths = []
     for item in fashion_data:
 
@@ -87,7 +85,3 @@ def bidding(request, item_number):
         'commentform': commentform,
         'comments': comments
         }) 
-        
-
-             
-

@@ -10,8 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
-import os
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-tj-9qh1!*m(p)8o+rskez&(*cr@$er3(o6^@5pb0hulq-60c4p'
+SECRET_KEY = 'django-insecure-*keo$f3#-x327$5l#$ez=!682l&vh0m4*k3)h#!a#t(d!aa_@f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -32,7 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'user',
+    'core',
     'auctions',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -64,8 +64,8 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media',
+                'django.contrib.messages.context_processors.messages',
             ],
         },
     },
@@ -80,26 +80,26 @@ WSGI_APPLICATION = 'Project_Commerce.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'projectcommerce',
+        'NAME': 'core',
         'USER': 'admin',
         'PASSWORD': '1234',
         'HOST': 'localhost',
         'PORT': '3306',
     },
     
-    'userdatabase': {
+    'auctions': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'user',
+        'NAME': 'projectcommerce',
         'USER': 'admin',
         'PASSWORD': '1234',
         'HOST': 'localhost',
         'PORT': '3306',
     }
 }
-DATABASE_ROUTERS = ['myapp.routers.UserRouter', 'myapp.routers.AuctionRouter']
 
-AUTH_USER_MODEL = 'user.CustomUser'
+DATABASE_ROUTERS = ['myapp.routers.auctionsRouter', 'myapp.routers.coreRouter']
 
+AUTH_USER_MODEL = 'core.CustomUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -135,12 +135,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
