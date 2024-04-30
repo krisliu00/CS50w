@@ -16,7 +16,7 @@ def save_images(images, item_number):
 
         img = Image.open(image)
         width, height = img.size
-        target_size = (350, 400)
+        target_size = (300, 350)
         width_ratio = target_size[0] / width
         height_ratio = target_size[1] / height
         scale = min(width_ratio, height_ratio)
@@ -46,14 +46,16 @@ def delete_instance(item_number):
 @receiver(post_delete, sender=AuctionList)
 def delete_auction_images(sender, instance, **kwargs):
     item_number = instance.item_number
-    media_folder_path = os.path.join(settings.MEDIA_ROOT, 'items', str(item_number))
-    if os.path.exists(media_folder_path):
-        for filename in os.listdir(media_folder_path):
-            file_path = os.path.join(media_folder_path, filename)
+    media_items_folder_path = os.path.join(settings.MEDIA_ROOT, 'items', str(item_number))
+    if os.path.exists(media_items_folder_path):
+        for filename in os.listdir(media_items_folder_path):
+            file_path = os.path.join(media_items_folder_path, filename)
             if os.path.isfile(file_path):
                 os.remove(file_path)
-        os.rmdir(media_folder_path)
-
+        os.rmdir(media_items_folder_path)
+    media_index_image_path = os.path.join(settings.MEDIA_ROOT, 'index_images', f"{item_number}.png")
+    if os.path.exists(media_index_image_path):
+        os.remove(media_index_image_path)
 
 @receiver(post_save, sender=Bidding)
 def current_price(sender, instance, **kwargs):

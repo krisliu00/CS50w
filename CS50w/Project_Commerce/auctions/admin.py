@@ -6,6 +6,11 @@ class AuctionListAdmin(admin.ModelAdmin):
     list_filter = ('category', 'end_time')
     search_fields = ('title', 'item_number')
     date_hierarchy = 'end_time'
+    actions = ['delete_selected']
+
+    def delete_selected(self, request, queryset):
+        queryset.delete()
+    delete_selected.short_description = "Delete selected items"
 
 class BiddingAdmin(admin.ModelAdmin):
     list_display = ('auction', 'bid')
