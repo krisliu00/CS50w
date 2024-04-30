@@ -60,16 +60,6 @@ class BiddingForm(forms.ModelForm):
         
         return bid
 
-
-
-    # def clean(self):
-    #     cleaned_data = super().clean()
-    #     bid = cleaned_data.get('bid')
-    #     if bid is not None:
-    #         if bid >= Decimal('500'):
-    #             raise forms.ValidationError('Single bid must not exceed 500.00$')
-    #     return cleaned_data
-
 class CommentForm(forms.ModelForm):
     
     class Meta:
@@ -87,7 +77,3 @@ class CommentForm(forms.ModelForm):
             raise forms.ValidationError('Please submit no more than 200 words')
 
         return comment
-        
-
-        
-        

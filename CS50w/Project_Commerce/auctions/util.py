@@ -15,14 +15,25 @@ def save_images(images, item_number):
     for image in images:
 
         img = Image.open(image)
-        img_resized = img.resize((320, 350))
+        width, height = img.size
+        target_size = (350, 400)
+        width_ratio = target_size[0] / width
+        height_ratio = target_size[1] / height
+        scale = min(width_ratio, height_ratio)
+        new_width = int(width * scale)
+        new_height = int(height * scale)
+        resized_img = img.resize((new_width, new_height))
+        adjusted_img = Image.new("RGB", target_size, color=(255, 255, 255))
+        offset = ((target_size[0] - new_width) // 2, (target_size[1] - new_height) // 2)
+        adjusted_img.paste(resized_img, offset)
         img_bytes = BytesIO()
-        img_resized.save(img_bytes, format='PNG') 
+        adjusted_img.save(img_bytes, format='PNG') 
         img_file = ContentFile(img_bytes.getvalue())
         upload_path = f'items/{item_number}/{image.name}'
         saved_path = default_storage.save(upload_path, img_file)
         saved_image_paths.append(saved_path)
     return saved_image_paths
+
 
 def delete_instance(item_number):
     try:
@@ -116,7 +127,3 @@ def index_image(item_number):
         background_image.save(image_file, format='PNG')
 
     return upload_path
-
-
-
-    
