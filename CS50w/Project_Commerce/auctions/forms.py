@@ -21,10 +21,12 @@ class MultipleFileField(forms.FileField):
 class SellList(forms.ModelForm):
     class Meta:
         model = AuctionList
-        fields = ['images','category','title', 'description', 'price']
+        fields = ['images', 'image_url', 'category','title', 'short_description', 'details', 'price']
     
-    images = MultipleFileField(label='Upload Images', required=True)
+    images = MultipleFileField(label='Upload Images', required=True, help_text='Please upload at least 1 image')
+    image_url = forms.URLField(label='Image URL', required=False, help_text="Enter the URL of your image")
     category = forms.ChoiceField(choices=AuctionList.category_choices)
+    short_description = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'No more than 30 characters'}))
 
     
     def clean_image(self):
