@@ -4,12 +4,12 @@
 
 
 {% block body %}
-{% for category, data_list in combined_data.items %}
-    <h3>{{ category|title }}</h3>
-    {% for image_path, item_number in data_list %}
-        <a href="{% url 'bidding' item_number %}" style="text-decoration: none">
-            <img src="{{ MEDIA_URL }}/{{ image_path }}" alt="Auction Image" style="cursor: pointer" target="_blank">
-        </a>
-    {% endfor %}
+
+<h2>Active Listing</h2>
+{% for image_path,item_number in active_list %}
+    <a href="{% url 'bidding' item_number %}" style="text-decoration: none">
+        <img src="{{ MEDIA_URL }}/{{ image_path }}" alt="Auction Image" style="cursor: pointer" target="_blank">
+    </a>
 {% endfor %}
+
 {% endblock %}

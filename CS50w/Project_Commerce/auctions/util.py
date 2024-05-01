@@ -1,4 +1,5 @@
 import glob
+import textwrap
 from django.core.files.storage import default_storage
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
@@ -88,6 +89,9 @@ def index_image(item_number):
     except AuctionList.DoesNotExist:
         return None
     
+    max_width = 280
+    wrapped_short_description = textwrap.fill(auction_data.short_description, width=max_width).replace('\n', ' ')
+
     media_folder_path = os.path.join(settings.MEDIA_ROOT, 'items', str(item_number))
     image_files = glob.glob(os.path.join(media_folder_path, '*.*'))
     
@@ -103,16 +107,16 @@ def index_image(item_number):
     current_time = datetime.now()
     remaining_time = end_time - current_time
     formattd_remaining_time = format_timedelta(remaining_time)
-    texts = [f"Title: {auction_data.title}", f"Price: {auction_data.price}", f"Time Remaining: {formattd_remaining_time}"]
+    texts = [f"{auction_data.title}", wrapped_short_description, f"Price: {auction_data.price}", f"Time Remaining: {formattd_remaining_time}"]
 
     y_position = 10
-    x_position = 10  # Starting x position
+    x_position = 10  
 
     for text in texts:
         for c in text:
             # Get the bounding box for the current character
             draw.text((x_position, y_position), c, fill="black", font=font)
-            x_position += draw.textlength(c, font=font)  # Move x position for the next character
+            x_position += draw.textlength(c, font=font)  
         
         
         y_position += draw.textbbox((x_position, y_position), text, font=font)[3] - draw.textbbox((x_position, y_position), text, font=font)[1] + 10

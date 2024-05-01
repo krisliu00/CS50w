@@ -30,7 +30,15 @@
         <h4>Description</h4>
             {% for obj in auctions %}
             <tr>
-                <td>{{ obj.description }}</td> 
+                <td>{{ obj.short_description }}</td> 
+            </tr>
+            {% endfor %}
+    </div>
+    <div>
+        <h4>Details</h4>
+            {% for obj in auctions %}
+            <tr>
+                <td>{{ obj.details }}</td> 
             </tr>
             {% endfor %}
     </div>

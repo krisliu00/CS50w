@@ -7,7 +7,8 @@ class AuctionList(models.Model):
         managed = True
         
     title = models.CharField(max_length=64)
-    description = models.TextField()
+    short_description = models.CharField(max_length=64)
+    details = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     category_choices = [
         ('fashion', 'Fashion'),
@@ -20,6 +21,7 @@ class AuctionList(models.Model):
     category = models.CharField(max_length=20, choices=category_choices)
     end_time = models.DateTimeField()
     item_number = models.CharField(max_length=64, primary_key=True)
+    image_url = models.URLField(null=True, blank=True)
     
 
 class Bidding(models.Model):
