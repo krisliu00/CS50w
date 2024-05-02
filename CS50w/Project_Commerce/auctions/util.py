@@ -10,6 +10,7 @@ import os
 from datetime import datetime
 from io import BytesIO
 from django.core.files.base import ContentFile
+from django.db.models import Max
 
 def save_images(images, item_number):
     saved_image_paths = []
@@ -58,17 +59,17 @@ def delete_auction_images(sender, instance, **kwargs):
     if os.path.exists(media_index_image_path):
         os.remove(media_index_image_path)
 
-@receiver(post_save, sender=Bidding)
-def current_price(sender, instance, **kwargs):
-    try:
-        auction_item = AuctionList.objects.get(item_number=instance.auction.item_number)
-        if instance.bid is not None:
-            current_price = instance.bid + auction_item.price
-            auction_item.price = current_price
-            auction_item.save()
+# @receiver(post_save, sender=Bidding)
+# def current_price(sender, instance, **kwargs):
+#     try:
+#         auction_item = AuctionList.objects.get(item_number=instance.auction.item_number)
+#         if instance.bid is not None:
+#             current_price = instance.bid + auction_item.price
+#             auction_item.price = current_price
+#             auction_item.save()
 
-    except AuctionList.DoesNotExist:
-        pass
+#     except AuctionList.DoesNotExist:
+#         pass
 
 def format_timedelta(remaining_time):
     total_seconds = remaining_time.total_seconds()
@@ -133,3 +134,18 @@ def index_image(item_number):
         background_image.save(image_file, format='PNG')
 
     return upload_path
+
+def highest_bidding(item_number):
+    user_ids = AuctionList.objects.filter(item_number=item_number).values_list('user_id', flat=True)
+    highest_bid = None
+    print(item_number)
+
+    for user_id in user_ids:
+        aggregation_result = Bidding.objects.filter(user_id=user_id).aggregate(max_bid=Max('bid'))
+        max_bid = aggregation_result.get('max_bid')  # Access max_bid from aggregation_result
+
+        if max_bid is not None:
+            if highest_bid is None or max_bid > highest_bid:
+                highest_bid = max_bid
+
+    return highest_bid

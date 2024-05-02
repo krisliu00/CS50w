@@ -2,9 +2,9 @@ import os
 import uuid
 from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect, render
-from .models import AuctionList,Comments
+from .models import AuctionList,Comments, Bidding
 from .forms import SellList, BiddingForm, CommentForm
-from .util import save_images, index_image
+from .util import save_images, index_image, highest_bidding
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
@@ -13,22 +13,16 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def index(request):
-    if request.user.is_authenticated:
-        user = request.user
-
     instances = AuctionList.objects.filter(end_time__gt=timezone.now())
-    active_list = []
 
-    for instance in instances:
-        image_path = index_image(instance.item_number)
-        item_number = instance.item_number
-        instance_tuple = (image_path, item_number)
-        active_list.append(instance_tuple)
-
+    active_list = [(index_image(instance.item_number), instance.item_number) for instance in instances]
+    
+    user = request.user if request.user.is_authenticated else None
+    
     return render(request, "auctions/index.html", {
         'active_list': active_list,
-        'user' : user
-        })
+        'user': user
+    })
 
 
 
@@ -69,7 +63,7 @@ def bidding(request, item_number):
                     bidding_instance = bidform.save(commit=False)
                     if bidding_instance is not None:
                         bidding_instance.auction = auction_instance
-                        comment_instance.user = request.user
+                        bidding_instance.user = request.user
                         bidding_instance.save()
                         return redirect('auctions:bidding', item_number=item_number)
             
@@ -86,6 +80,8 @@ def bidding(request, item_number):
         pass
     
     comments = Comments.objects.filter(auction=auction_instance)
+    biddings = Bidding.objects.filter(auction=auction_instance)
+    current_price = highest_bidding(auction_instance.item_number)
     folder_path = os.path.join(settings.MEDIA_ROOT, 'items', str(item_number))
     image_filenames = os.listdir(folder_path)
     
@@ -95,5 +91,7 @@ def bidding(request, item_number):
         'images':image_filenames, 
         'bidform' :bidform,
         'commentform': commentform,
-        'comments': comments
+        'comments': comments,
+        'biddings':biddings,
+        'current_price':current_price        
         }) 
