@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -51,3 +51,7 @@ def login_view(request):
     else:
         Loginform = UserLoginForm()
     return render(request, "core/login.html", {"form": Loginform})
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect(reverse("auctions:index"))

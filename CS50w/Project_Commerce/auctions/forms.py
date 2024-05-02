@@ -55,10 +55,8 @@ class BiddingForm(forms.ModelForm):
             
             return None
         
-        if bid % Decimal('5') != Decimal('0'):
-            raise forms.ValidationError('Bid must be a multiple of 5.')
-        if bid > Decimal('500'):
-            raise forms.ValidationError('Single bid must not exceed 500.00$')
+        if bid > Decimal('500') or bid < Decimal('5'):
+            raise forms.ValidationError('Single bid must between 5.00$-500.00$')
         
         return bid
 

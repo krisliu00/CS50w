@@ -27,8 +27,12 @@
         <h4>Details</h4>
         {{ auction.detail }}
     </div>
-    <div><h4>Current Price</h4></div>
+    <div>
+        <h4>Starting price</h4>
         {{ auction.price }}
+    </div>
+    <div><h4>Current Price</h4></div>
+        {{ current_price }}
     </div>
     <div>
         {{ auction.end_time }}
@@ -49,6 +53,15 @@
         </form>
     </div>
     {% endif %}
+    <div>
+        <h4>Bidding</h4>
+        {% for obj in biddings %} 
+        
+        {{ obj.user }}        
+        {{ obj.bid}} 
+        
+        {% endfor %}
+    </div>
     <div>
         <h4>Comment</h4>
         {% for obj in comments %} 
