@@ -9,53 +9,31 @@
         {% for image in images %}
             <img src="{{ MEDIA_URL }}items/{{ item_number }}/{{ image }}" alt="images">
         {% endfor %}
+        <img src="{{ auction.image_url }}" style="max-width: 300px; max-height: 350px;">
     </div>
     <div>
         <h3>Category</h3>
-            {% for obj in auctions %}
-            <tr>
-                <td>{{ obj.category }}</td> 
-            </tr>
-            {% endfor %}
+            {{ auction.category }}
     </div>
     <div>
         <h4>Title</h4>
-        {% for obj in auctions %}
-            <tr>
-                <td>{{ obj.title }}</td> 
-            </tr>
-            {% endfor %}
+        {{ auction.title }}
     </div>
     <div>
         <h4>Description</h4>
-            {% for obj in auctions %}
-            <tr>
-                <td>{{ obj.short_description }}</td> 
-            </tr>
-            {% endfor %}
+        {{ auction.short_description }}
     </div>
     <div>
         <h4>Details</h4>
-            {% for obj in auctions %}
-            <tr>
-                <td>{{ obj.details }}</td> 
-            </tr>
-            {% endfor %}
+        {{ auction.detail }}
     </div>
     <div><h4>Current Price</h4></div>
-            {% for obj in auctions %}
-            <tr>
-                <td>{{ obj.price }}</td> 
-            </tr>
-            {% endfor %}
+        {{ auction.price }}
     </div>
-    <div>Endtime
-            {% for obj in auctions %}
-            <tr>
-                <td>{{ obj.end_time }}</td> 
-            </tr>
-            {% endfor %}
+    <div>
+        {{ auction.end_time }}
     </div>
+    {% if user.is_authenticated %}
     <div>
         <form method="post">
             {% csrf_token %}
@@ -70,13 +48,16 @@
             <button type="submit">Submit</button>
         </form>
     </div>
+    {% endif %}
     <div>
         <h4>Comment</h4>
-        {% for comment in comments %}
-            <tr>
-                <td>{{ comment.comment }}</td> 
-            </tr>
-            {% endfor %}
+        {% for obj in comments %} 
+        
+        {{ obj.user }}        
+        {{ obj.comment }} 
+        
+        {% endfor %}
+     
     </div>
 </div>
 

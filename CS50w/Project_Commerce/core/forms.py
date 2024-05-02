@@ -26,13 +26,13 @@ class UserRegistrationForm(forms.ModelForm):
 
         return user
 
-# class UserLoginForm(forms.Form):
-#     username = forms.CharField(label="username", max_length=64)
-#     password = forms.CharField(label="password", widget=forms.PasswordInput())
+class UserLoginForm(forms.Form):
+    username = forms.CharField(label="username", max_length=64)
+    password = forms.CharField(label="password", widget=forms.PasswordInput())
 
-#     def clean(self):
-#         cleaned_data = super().clean()
-#         username = cleaned_data.get('username')
-#         password = cleaned_data.get('password')
+    def clean(self):
+        cleaned_data = super().clean()
+        username = cleaned_data.get('username')
+        password = cleaned_data.get('password')
 
-#         return cleaned_data
+        return cleaned_data

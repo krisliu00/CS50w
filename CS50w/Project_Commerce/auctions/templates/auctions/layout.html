@@ -15,9 +15,20 @@
         <div class="sidebar">
             <a href="#home">Categories</a>
             <a href="#news">Bidding</a>
+            {% if user.is_authenticated %}
             <a href="#contact">Watchlist</a>
             <a href="#about">MyAuction</a>
-          </div>
+            {% endif %}
+        </div>
+        <div class ="login">
+            <a href="{% url 'core:login' %}">Login</a>
+            <a href="#home">Logout</a>
+            <a href="{% url 'core:register' %}">Register</a>
+        </div>
+        <div class ="userinfo">
+            {{ user.username }}
+            <p>Welcome, {{ user.first_name }}</p>
+        </div>
         {% block body %}
         {% endblock %}
     </body>

@@ -3,8 +3,9 @@ from django.contrib.auth import login
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm,UserLoginForm
 from .models import CustomUser
+from django.contrib.auth import authenticate
 
 
 # Create your views here.
@@ -28,25 +29,25 @@ def register(request):
         form = UserRegistrationForm()
     return render(request, "core/register.html", {"form": form})
 
-# def login_view(request):
-#     if request.method == "POST":
+def login_view(request):
+    if request.method == "POST":
 
-#         Loginform = UserLoginForm(request.POST)
+        Loginform = UserLoginForm(request.POST)
 
-#         if Loginform.is_valid():
-#             username = Loginform.cleaned_data['username']
-#             password = Loginform.cleaned_data['password']
-#             user = authenticate(request, username=username, password=password)
+        if Loginform.is_valid():
+            username = Loginform.cleaned_data['username']
+            password = Loginform.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
 
-#             if user is not None:
-#                 login(request, user)
-#                 return HttpResponseRedirect(reverse("auctions:index"))
-#             else:
-#                 return render(request, "user/login.html", {
-#                     "form": Loginform,
-#                     "message": "Invalid username and/or password."
-#                 })
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect(reverse('auctions:index'))
+            else:
+                return render(request, "core/login.html", {
+                    "form": Loginform,
+                    "message": "Invalid username and/or password."
+                })
             
-#     else:
-#         Loginform = UserLoginForm()
-#     return render(request, "user/login.html", {"form": Loginform})
+    else:
+        Loginform = UserLoginForm()
+    return render(request, "core/login.html", {"form": Loginform})

@@ -5,6 +5,10 @@
 
 {% block body %}
 
+{% if message %}
+    {{ message }}
+{% endif %}
+
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
@@ -12,6 +16,6 @@
 </form>
 
 
-Don't have an account? <a href="{% url 'register' %}">Register here.</a>
+Don't have an account? <a href="{% url 'core:register' %}">Register here.</a>
 
 {% endblock %}
