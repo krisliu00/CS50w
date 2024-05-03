@@ -44,6 +44,13 @@
             {{ bidform.as_p }}           
             <button type="submit">Place a bid!</button>
         </form>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
     </div>
     <div>
         <form method="post">
@@ -72,6 +79,19 @@
         {% endfor %}
      
     </div>
+    {% if user.is_authenticated %}
+    <div>
+    <form action="{% url 'auctions:watchlist' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="item_number" value="{{ item_number }}">
+        {% if item_in_watchlist %}
+            <button type="submit">Remove from my watchlist</button>
+        {% else %}
+            <button type="submit">Add to my watchlist</button>
+        {% endif %}
+    </form>
+</div>
+    {% endif %}
 </div>
 
     

@@ -1,0 +1,13 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}Auctions{% endblock %}
+
+
+{% block body %}
+
+<h2>My Watchlist</h2>
+{% for watchlist_image in watchlist_images %}
+    <img src="{{ watchlist_image }}" alt="Watchlist Image">
+{% endfor %}
+
+{% endblock %}

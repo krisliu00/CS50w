@@ -149,3 +149,13 @@ def highest_bidding(item_number):
                 highest_bid = max_bid
 
     return highest_bid
+
+
+
+def watchlist_image(item_number):
+    file_name = None
+    
+    if item_number:
+        file_name = f"{settings.MEDIA_URL}index_images/{item_number}.png"
+
+    return file_name

@@ -2,18 +2,20 @@ import os
 import uuid
 from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect, render
-from .models import AuctionList,Comments, Bidding
+from .models import AuctionList,Comments, Bidding, WatchList
 from .forms import SellList, BiddingForm, CommentForm
-from .util import save_images, index_image, highest_bidding
+from .util import save_images, index_image, highest_bidding, watchlist_image
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
 
 
 # Create your views here.
 
 def index(request):
-    instances = AuctionList.objects.filter(end_time__gt=timezone.now())
+    instances = AuctionList.objects.filter(is_active=True)
 
     active_list = [(index_image(instance.item_number), instance.item_number) for instance in instances]
     
@@ -54,19 +56,27 @@ def bidding(request, item_number):
     auction_instance = get_object_or_404(AuctionList, item_number=item_number)
     bidform=BiddingForm()
     commentform = CommentForm()
+    current_price = highest_bidding(auction_instance.item_number)
+    starting_price = auction_instance.price
+    item_in_watchlist = False
 
     if request.method == "POST":
         if request.user.is_authenticated:
             if 'bid' in request.POST:
                 bidform = BiddingForm(request.POST)
+
                 if bidform.is_valid():
-                    bidding_instance = bidform.save(commit=False)
-                    if bidding_instance is not None:
-                        bidding_instance.auction = auction_instance
-                        bidding_instance.user = request.user
-                        bidding_instance.save()
-                        return redirect('auctions:bidding', item_number=item_number)
-            
+                    bid_value = bidform.cleaned_data.get('bid')
+                    if (current_price is None and bid_value > starting_price) or (current_price is not None and bid_value > current_price):
+                        bidding_instance = bidform.save(commit=False)
+                        if bidding_instance is not None:
+                            bidding_instance.auction = auction_instance
+                            bidding_instance.user = request.user
+                            bidding_instance.save()
+                            return redirect('auctions:bidding', item_number=item_number)
+                    else:
+                        messages.error(request, 'Invalid bid value.')
+
             elif 'comment' in request.POST:
                 commentform = CommentForm(request.POST)
                 if commentform.is_valid():
@@ -75,16 +85,18 @@ def bidding(request, item_number):
                         comment_instance.auction = auction_instance
                         comment_instance.user = request.user
                         comment_instance.save()
-                        return redirect('auctions:bidding', item_number=item_number)
+                        return render('auctions:bidding', item_number=item_number)
     else:
         pass
     
     comments = Comments.objects.filter(auction=auction_instance)
     biddings = Bidding.objects.filter(auction=auction_instance)
-    current_price = highest_bidding(auction_instance.item_number)
     folder_path = os.path.join(settings.MEDIA_ROOT, 'items', str(item_number))
     image_filenames = os.listdir(folder_path)
-    
+
+    if request.user.is_authenticated:
+        item_in_watchlist = WatchList.objects.filter(user=request.user, item_number=item_number).exists()
+
     return render(request, 'auctions/bidding.html', {
         'auction': auction_instance,
         'item_number':item_number, 
@@ -93,5 +105,33 @@ def bidding(request, item_number):
         'commentform': commentform,
         'comments': comments,
         'biddings':biddings,
-        'current_price':current_price        
+        'current_price':current_price,        
+        'item_in_watchlist': item_in_watchlist
         }) 
+
+@login_required
+def watchlist(request):
+    item_number = request.POST.get('item_number') 
+    current_user = request.user
+
+    if request.method == "POST":
+        
+        if not WatchList.objects.filter(user=request.user, item_number=item_number).exists():
+                
+            WatchList.objects.create(user=request.user, item_number=item_number)
+            return redirect('auctions:bidding', item_number=item_number)
+
+        else:
+            WatchList.objects.filter(user=request.user, item_number=item_number).delete()
+            return redirect('auctions:bidding', item_number=item_number)
+        
+    else:        
+            file_paths = []
+            watchlist_instances = WatchList.objects.filter(user=current_user)
+            for obj in watchlist_instances:
+                file_path = watchlist_image(obj.item_number)
+                file_paths.append(file_path)
+    
+    return render(request, 'auctions/watchlist.html',{
+        'watchlist_images': file_paths,
+    })

@@ -8,6 +8,7 @@ app_name = 'auctions'
 urlpatterns = [
     path("", views.index, name="index"),
     path("sell", views.sell, name="sell"),
-    path('bidding/<str:item_number>', views.bidding, name="bidding")
+    path('bidding/<str:item_number>', views.bidding, name="bidding"),
+    path('watchlist', views.watchlist, name="watchlist")
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

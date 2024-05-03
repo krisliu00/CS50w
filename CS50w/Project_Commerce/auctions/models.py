@@ -1,5 +1,6 @@
 from django.db import models
 from core.models import CustomUser
+from django.utils import timezone
 
 
 
@@ -24,6 +25,10 @@ class AuctionList(models.Model):
     item_number = models.CharField(max_length=64, primary_key=True)
     image_url = models.URLField(null=True, blank=True)
     user = models.ForeignKey(CustomUser, db_constraint=False, on_delete=models.CASCADE, related_name='auction_user')
+    is_active = models.BooleanField(default=True)
+
+    def is_expired(self):
+        return timezone.now() > self.end_time
 
 
 
@@ -39,5 +44,7 @@ class Comments(models.Model):
     comment = models.CharField(max_length=200, null=True, blank=True)
     user = models.ForeignKey(CustomUser, db_constraint=False, on_delete=models.CASCADE, related_name='comment_user')
 
-
+class WatchList(models.Model):
+    user = models.ForeignKey(CustomUser, db_constraint=False, on_delete=models.CASCADE, related_name='watch_list_user')
+    item_number = models.CharField(max_length=64)
 
