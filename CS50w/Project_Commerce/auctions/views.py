@@ -4,9 +4,8 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect, render
 from .models import AuctionList,Comments, Bidding, WatchList
 from .forms import SellList, BiddingForm, CommentForm
-from .util import save_images, index_image, highest_bidding, watchlist_image
-from datetime import timedelta
-from django.utils import timezone
+from .util import save_images, index_image, highest_bidding, watchlist_image, close_list
+from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
@@ -38,7 +37,7 @@ def sell(request):
                 auction_list_instance = form.save(commit=False)
                 item_number = uuid.uuid4().hex[:10]
                 auction_list_instance.item_number = item_number
-                expiration_time = timezone.now() + timedelta(days=2)
+                expiration_time = datetime.now() + timedelta(days=2)
                 auction_list_instance.end_time = expiration_time
                 auction_list_instance.user = request.user
                 auction_list_instance.save()
@@ -59,7 +58,6 @@ def bidding(request, item_number):
     current_price = highest_bidding(auction_instance.item_number)
     starting_price = auction_instance.price
     item_in_watchlist = False
-
     if request.method == "POST":
         if request.user.is_authenticated:
             if 'bid' in request.POST:
@@ -96,7 +94,7 @@ def bidding(request, item_number):
 
     if request.user.is_authenticated:
         item_in_watchlist = WatchList.objects.filter(user=request.user, item_number=item_number).exists()
-
+        
     return render(request, 'auctions/bidding.html', {
         'auction': auction_instance,
         'item_number':item_number, 
@@ -106,7 +104,8 @@ def bidding(request, item_number):
         'comments': comments,
         'biddings':biddings,
         'current_price':current_price,        
-        'item_in_watchlist': item_in_watchlist
+        'item_in_watchlist': item_in_watchlist,
+        'request': request
         }) 
 
 @login_required
@@ -135,3 +134,11 @@ def watchlist(request):
     return render(request, 'auctions/watchlist.html',{
         'watchlist_images': file_paths,
     })
+
+@login_required
+def Closelist(request):
+    if request.method == "POST":
+        user_id = request.user.id
+        form_item_number = request.POST.get('item_number')
+        close_list(user_id, form_item_number)
+        return redirect('auctions:bidding', item_number=form_item_number)

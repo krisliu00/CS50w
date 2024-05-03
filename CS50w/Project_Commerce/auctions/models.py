@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from core.models import CustomUser
 from django.utils import timezone
@@ -26,9 +27,9 @@ class AuctionList(models.Model):
     image_url = models.URLField(null=True, blank=True)
     user = models.ForeignKey(CustomUser, db_constraint=False, on_delete=models.CASCADE, related_name='auction_user')
     is_active = models.BooleanField(default=True)
-
-    def is_expired(self):
-        return timezone.now() > self.end_time
+   
+    def is_creator(self, user):
+        return self.user == user
 
 
 

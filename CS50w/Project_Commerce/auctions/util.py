@@ -12,6 +12,7 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 from django.db.models import Max
 
+
 def save_images(images, item_number):
     saved_image_paths = []
     for image in images:
@@ -136,17 +137,14 @@ def index_image(item_number):
     return upload_path
 
 def highest_bidding(item_number):
-    user_ids = AuctionList.objects.filter(item_number=item_number).values_list('user_id', flat=True)
+
     highest_bid = None
-    print(item_number)
+    aggregation_result = Bidding.objects.filter(auction_id=item_number).aggregate(max_bid=Max('bid'))
+    max_bid = aggregation_result.get('max_bid')  # Access max_bid from aggregation_result
 
-    for user_id in user_ids:
-        aggregation_result = Bidding.objects.filter(user_id=user_id).aggregate(max_bid=Max('bid'))
-        max_bid = aggregation_result.get('max_bid')  # Access max_bid from aggregation_result
-
-        if max_bid is not None:
-            if highest_bid is None or max_bid > highest_bid:
-                highest_bid = max_bid
+    if max_bid is not None:
+        if highest_bid is None or max_bid > highest_bid:
+            highest_bid = max_bid
 
     return highest_bid
 
@@ -159,3 +157,10 @@ def watchlist_image(item_number):
         file_name = f"{settings.MEDIA_URL}index_images/{item_number}.png"
 
     return file_name
+
+def close_list(user_id, item_number):
+    auction_instance = AuctionList.objects.get(user_id=user_id, item_number=item_number)
+    auction_instance.end_time = datetime.now()
+    auction_instance.is_active = False
+    auction_instance.save()
+    return None
