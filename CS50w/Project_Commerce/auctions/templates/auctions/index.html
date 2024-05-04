@@ -4,10 +4,14 @@
 
 
 {% block body %}
-<h2>Active Listing</h2>
-{% for image_path,item_number in active_list %}
-    <a href="{% url 'auctions:bidding' item_number %}" style="text-decoration: none">
-        <img src="{{ MEDIA_URL }}/{{ image_path }}" alt="Auction Image" style="cursor: pointer" target="_blank">
-    </a>
-{% endfor %}
+<div class="index">
+<h2 id="index_text">Active Listing</h2>
+    <div class="active-listing">
+        {% for image_path,item_number in active_list %}
+            <a href="{% url 'auctions:bidding' item_number %}" style="text-decoration: none">
+                <img src="{{ MEDIA_URL }}/{{ image_path }}" alt="Auction Image" style="cursor: pointer" target="_blank">
+            </a>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

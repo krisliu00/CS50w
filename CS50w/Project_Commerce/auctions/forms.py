@@ -22,13 +22,15 @@ class SellList(forms.ModelForm):
     class Meta:
         model = AuctionList
         fields = ['images', 'image_url', 'category','title', 'short_description', 'details', 'price']
+        help_texts = {
+            'group': 'helptext',
+        }
     
     images = MultipleFileField(label='Upload Images', required=True, help_text='Please upload at least 1 image')
     image_url = forms.URLField(label='Image URL', required=False, help_text="Enter the URL of your image")
     category = forms.ChoiceField(choices=AuctionList.category_choices)
     short_description = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'No more than 30 characters'}))
 
-    
     def clean_image(self):
         images = self.cleaned_data.get('images')
         if not images:
