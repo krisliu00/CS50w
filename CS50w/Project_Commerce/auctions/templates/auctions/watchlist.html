@@ -6,8 +6,10 @@
 {% block body %}
 
 <h2>My Watchlist</h2>
-{% for watchlist_image in watchlist_images %}
-    <img src="{{ watchlist_image }}" alt="Watchlist Image">
+{% for watchlist_image, item_number in watchlist_item_with_images %}
+    <a href="{% url 'auctions:bidding' item_number %}" style="text-decoration: none">
+        <img src="{{ watchlist_image }}" alt="Watchlist Image" style="cursor: pointer" target="_blank">
+    </a>
 {% endfor %}
 
 {% endblock %}

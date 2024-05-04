@@ -1,0 +1,35 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}Auctions{% endblock %}
+
+
+{% block body %}
+
+<h2>My Auciton</h2>
+{% for paths, item_numbers in myauction_list %}
+    <a href="{% url 'auctions:bidding' item_numbers %}" style="text-decoration: none">
+        <img src="{{ paths }}" alt="Auction Image" style="cursor: pointer" target="_blank">
+    </a>
+{% endfor %}
+
+<h2>My Comments</h2>
+<ul>
+{% for title, comments in comment_mapping.items %}
+    <li>{{ title }}:</li>
+    {% for comment in comments %}
+        <ul>{{ comment }}</ul>
+    {% endfor %}
+{% endfor %}
+</ul>
+
+<h2>My Bidding</h2>
+<ul>
+{% for title, bids in bidding_mapping.items %}
+    <li>{{ title }}:</li>
+    {% for bid in bids %}
+        <ul>{{ bid }}</ul>
+    {% endfor %}
+{% endfor %}
+</ul>
+
+{% endblock %}

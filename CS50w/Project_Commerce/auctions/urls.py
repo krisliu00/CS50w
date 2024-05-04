@@ -10,6 +10,7 @@ urlpatterns = [
     path("sell", views.sell, name="sell"),
     path('bidding/<str:item_number>', views.bidding, name="bidding"),
     path('watchlist', views.watchlist, name="watchlist"),
-    path('closelist', views.Closelist, name="closelist")
+    path('closelist', views.Closelist, name="closelist"),
+    path('myauction', views.MyAuctionView, name="myauction")
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -137,16 +137,24 @@ def index_image(item_number):
     return upload_path
 
 def highest_bidding(item_number):
+    highest_bids = []
+    
+    highest_bid_objects = Bidding.objects.filter(auction_id=item_number).order_by('-bid')
 
-    highest_bid = None
-    aggregation_result = Bidding.objects.filter(auction_id=item_number).aggregate(max_bid=Max('bid'))
-    max_bid = aggregation_result.get('max_bid')  # Access max_bid from aggregation_result
+    if highest_bid_objects:
+        highest_bid_amount = highest_bid_objects[0].bid  
+        
+        for bid_object in highest_bid_objects:
+            if bid_object.bid == highest_bid_amount:
+                highest_bids.append((bid_object.bid, bid_object.user))  
 
-    if max_bid is not None:
-        if highest_bid is None or max_bid > highest_bid:
-            highest_bid = max_bid
+        if len(highest_bids) == 1:  
+                return highest_bids[0]
+        else:
+            return None           
+    else:
+        return None     
 
-    return highest_bid
 
 
 
