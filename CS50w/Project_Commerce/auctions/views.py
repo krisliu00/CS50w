@@ -8,7 +8,6 @@ from .util import save_images, index_image, highest_bidding, watchlist_image, cl
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Prefetch
 
 
 
@@ -77,7 +76,7 @@ def bidding(request, item_number):
                             bidding_instance.auction = auction_instance
                             bidding_instance.user = request.user
                             bidding_instance.save()
-                            return redirect('auctions:bidding', item_number=auction_instance.item_numberr)
+                            return redirect('auctions:bidding', item_number=auction_instance.item_number)
                     else:
                         messages.error(request, 'Invalid bid value.')
 
@@ -211,3 +210,24 @@ def MyAuctionView(request):
 #         'myauction_list': myauction_list,
 #         'item_with_biddings': item_with_biddings
 #     })
+
+def CategoryView(request):
+    categories = ['fashion', 'electronics', 'accessories', 'toy', 'furniture', 'others']
+
+    category_items = {}
+    for category in categories:
+        instances = AuctionList.objects.filter(category=category, is_active=True).order_by('category', 'item_number')
+        category_items[category] = [{'item_number': instance.item_number, 'category': instance.category, 'image_path': index_image(instance.item_number) } for instance in instances]
+
+    return render(request, "auctions/category.html", {
+        'category_items': category_items
+    })
+        
+def SublistView(request, category):
+    instances = AuctionList.objects.filter(category=category, is_active=True).order_by('category', 'item_number')
+    category_items = {}
+    category_items[category] = [{'item_number': instance.item_number, 'image_path': index_image(instance.item_number) } for instance in instances]
+    return render(request, "auctions/sublisting.html",{
+        'listing_items': category_items,
+        'category': category
+    })

@@ -14,7 +14,15 @@
         <hr>
         <div class="sidebar">
             <a href="{% url 'auctions:index' %}">Home</a>
-            
+            <div class="category">
+                <a href="{% url 'auctions:category' %}">Category</a>
+                <a href="{% url 'auctions:sublist' category='fashion' %}">Fashion</a>
+                <a href="{% url 'auctions:sublist' category='electronics' %}">Electronics</a>
+                <a href="{% url 'auctions:sublist' category='accessories' %}">Accessories</a>
+                <a href="{% url 'auctions:sublist' category='toy' %}">Toy</a>
+                <a href="{% url 'auctions:sublist' category='furniture' %}">Furniture</a>
+                <a href="{% url 'auctions:sublist' category='others' %}">Others</a>
+                
             {% if user.is_authenticated %}
             <a href="{% url 'auctions:watchlist' %}">Watchlist</a>
             <a href="{% url 'auctions:myauction' %}">MyAuction</a>
