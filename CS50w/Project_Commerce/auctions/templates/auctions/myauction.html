@@ -31,12 +31,21 @@
 <div class="myauction_bidding">
 <h2>My Bidding</h2>
 <ul>
-{% for title, bids in bidding_mapping.items %}
-    <li>{{ title }}:</li>
-    {% for bid in bids %}
-        <ul>{{ bid }}</ul>
+    {% if won_items %}
+    <div class="won-items"> 
+        {% for item_number, item_data in won_items.items %}
+            <a href="{% url 'auctions:bidding' item_number %}"  style="text-decoration: none">
+                {{ item_data.title }} : {{ item_data.bid_amount }}$  &nbsp&nbspYou Won!
+            </a>
+        {% endfor %} 
+    </div>    
+    {% endif %}
+    {% for title, bids in bidding_mapping.items %}
+        <li>{{ title }}:</li>
+        {% for bid in bids %}
+            <ul>{{ bid }}$</ul>
+        {% endfor %}
     {% endfor %}
-{% endfor %}
 </ul>
 </div>
 </div>

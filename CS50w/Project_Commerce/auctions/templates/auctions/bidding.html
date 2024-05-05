@@ -10,7 +10,9 @@
             {% for image in images %}
                 <img src="{{ MEDIA_URL }}items/{{ item_number }}/{{ image }}" alt="images">
             {% endfor %}
+            {% if auction.image_url %}
             <img src="{{ auction.image_url }}" style="max-width: 300px; max-height: 350px;">
+            {% endif %}
         </div>
         <div class="item_details">
             <h3>Title</h3>
@@ -18,9 +20,9 @@
             <h3>Details</h3>
             <p>{{ auction.details|linebreaksbr }}</p>
             <h3>Starting price</h3>
-            <p>{{ auction.price }}</p>
+            <p>{{ auction.price }}$</p>
             <h3>Current Price</h3>
-            <p>{{ highest_bid }}</p>
+            <p>{{ highest_bid }}$</p>
         </div>
     </div>
     <div class="right_column">
@@ -32,7 +34,7 @@
             <h3>Close Time</h3>
             <p>{{ auction.end_time }}</p>
         </div>
-    {% if auction.is_active %}
+    
         {% if user.is_authenticated %}
             {% if not is_creator %}
                 <form action="{% url 'auctions:watchlist' %}" method="post">
@@ -45,16 +47,16 @@
                     {% endif %}
                 </form>
             {% endif %}
-        
-            {% if is_creator %}
-                <form action="{% url 'auctions:closelist' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="item_number" value="{{ item_number }}">
-                    <button type="submit" class="close-auction-button">Close auction</button>
-                </form>
+            {% if auction.is_active %}
+                {% if is_creator %}
+                    <form action="{% url 'auctions:closelist' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="item_number" value="{{ item_number }}">
+                        <button type="submit" class="close-auction-button">Close auction</button>
+                    </form>
+                {% endif %}
             {% endif %}
         {% endif %}
-    {% endif %}
     {% if not auction.is_active %}
         {% if winner %}
             {% if user.is_authenticated %}
@@ -90,7 +92,7 @@
         <h4>Bidding</h4>
         {% for obj in biddings %} 
         <p>
-            {{ obj.user }} - {{ obj.bid }}
+            {{ obj.user }} - {{ obj.bid }}$
         </p>
         {% endfor %}
     </div>

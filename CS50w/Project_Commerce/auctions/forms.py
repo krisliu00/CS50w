@@ -46,6 +46,7 @@ class SellList(forms.ModelForm):
     
 
 class BiddingForm(forms.ModelForm):
+    bid = forms.DecimalField(widget=forms.NumberInput(attrs={'placeholder': '$'}))
     
     class Meta:
         model = Bidding

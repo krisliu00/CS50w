@@ -165,8 +165,9 @@ align-items: center;
 .active-listing {
 display: flex;
 flex-wrap: wrap;
-justify-content: center;
-gap: 20px; /* Adjust as needed */
+justify-content: flex-start; 
+margin-left: 200px; 
+gap: 20px;
 }
 
 .active-listing a {
@@ -194,8 +195,9 @@ cursor: pointer;
 .category_listing, .watchlist_listing, .myauction_listing {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    flex-direction: column;
+    justify-content: flex-start; 
+    margin-left: 200px; 
+    gap: 20px;
 }
 
 .category_item, .watchlist_item, .myauction_item {
@@ -419,5 +421,13 @@ cursor: pointer;
 .comment-button:hover {
     background-color: #0056b3;
 }
+.won-items {
+    padding: 10px;
+    margin-bottom: 20px; 
+}
 
+.won-items a {
+    color: #ff0000;
+    font-weight: bold; 
+}
 

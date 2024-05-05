@@ -88,7 +88,7 @@ def bidding(request, item_number):
                         comment_instance.auction = auction_instance
                         comment_instance.user = request.user
                         comment_instance.save()                       
-                        return render('auctions:bidding', item_number=auction_instance.item_number)
+                        return redirect('auctions:bidding', item_number=auction_instance.item_number)
     else:
         pass
     
@@ -163,7 +163,21 @@ def MyAuctionView(request):
 
     user_involved_items = AuctionList.objects.filter(item_number__in=user_involved_auction_ids).prefetch_related('comments', 'biddings')
 
-    myauction_list = [(watchlist_image(item.item_number), item) for item in my_items]
+    closed_bidded_items = AuctionList.objects.filter(item_number__in=bidding_auction_ids, is_active=False).prefetch_related('biddings')
+    
+    won_items = {}
+
+    for item in closed_bidded_items:
+
+        hightest_bid_amount = highest_bidding(item.item_number)
+        user_bid_amount = item.biddings.filter(user=request.user)
+
+        if user_bid_amount[0].bid == hightest_bid_amount[0]:
+
+            won_items[item.item_number] = {'title': item.title, 'bid_amount': user_bid_amount[0].bid}
+
+
+    myauction_list = [(watchlist_image(item.item_number), item.item_number) for item in my_items]
 
     comment_mapping = {}
     bidding_mapping = {}
@@ -180,6 +194,7 @@ def MyAuctionView(request):
         'myauction_list': myauction_list,
         'comment_mapping': comment_mapping,
         'bidding_mapping': bidding_mapping,
+        'won_items': won_items
     })
 # another method for MyAuctionView
 #  def MyAuctionView(request):
