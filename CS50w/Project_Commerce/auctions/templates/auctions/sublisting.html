@@ -1,0 +1,21 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %} {{ category }} {% endblock %}
+
+
+{% block body %}
+<div class="category_items">
+    <h2 id="sub_category_text">{{ category }}</h2>
+    <div class="category_listing">
+        {% for key, items in listing_items.items %}
+            {% for item in items %}
+            <div class="category_item">
+                <a href="{% url 'auctions:bidding' item.item_number %}" class="item_link">
+                    <img src="{{ MEDIA_URL }}/{{ item.image_path }}" alt="Auction Image" class="item_image" target="_blank">
+                </a>
+            </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

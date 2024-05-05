@@ -12,6 +12,7 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 from django.db.models import Max
 
+
 def save_images(images, item_number):
     saved_image_paths = []
     for image in images:
@@ -90,6 +91,12 @@ def index_image(item_number):
     except AuctionList.DoesNotExist:
         return None
     
+    current_price = auction_data.price
+
+    highest_bid = highest_bidding(auction_data.item_number)
+    
+    highest_bid = highest_bid[0] if (highest_bid and highest_bid[0] > current_price) else current_price
+    
     max_width = 280
     wrapped_short_description = textwrap.fill(auction_data.short_description, width=max_width).replace('\n', ' ')
 
@@ -108,7 +115,7 @@ def index_image(item_number):
     current_time = datetime.now()
     remaining_time = end_time - current_time
     formattd_remaining_time = format_timedelta(remaining_time)
-    texts = [f"{auction_data.title}", wrapped_short_description, f"Price: {auction_data.price}", f"Time Remaining: {formattd_remaining_time}"]
+    texts = [f"{auction_data.title}", wrapped_short_description, f"Current Price: {highest_bid}$", f"Time Remaining: {formattd_remaining_time}"]
 
     y_position = 10
     x_position = 10  
@@ -136,16 +143,41 @@ def index_image(item_number):
     return upload_path
 
 def highest_bidding(item_number):
-    user_ids = AuctionList.objects.filter(item_number=item_number).values_list('user_id', flat=True)
-    highest_bid = None
-    print(item_number)
+    highest_bids = []
+    
+    highest_bid_objects = Bidding.objects.filter(auction_id=item_number).order_by('-bid')
 
-    for user_id in user_ids:
-        aggregation_result = Bidding.objects.filter(user_id=user_id).aggregate(max_bid=Max('bid'))
-        max_bid = aggregation_result.get('max_bid')  # Access max_bid from aggregation_result
+    if highest_bid_objects:
+        highest_bid_amount = highest_bid_objects[0].bid  
+        
+        for bid_object in highest_bid_objects:
+            if bid_object.bid == highest_bid_amount:
+                highest_bids.append((bid_object.bid, bid_object.user))  
+                
+        '''below if was supposed to avoid situations that multiple users bid the same when closed, 
+        but actually by limiting bid value it won't happen
+        '''
+        if len(highest_bids) == 1:  
+                return highest_bids[0] 
+        else:
+            return None           
+    else:
+        return None     
 
-        if max_bid is not None:
-            if highest_bid is None or max_bid > highest_bid:
-                highest_bid = max_bid
 
-    return highest_bid
+
+
+def watchlist_image(item_number):
+    file_name = None
+    
+    if item_number:
+        file_name = f"{settings.MEDIA_URL}index_images/{item_number}.png"
+
+    return file_name
+
+def close_list(user_id, item_number):
+    auction_instance = AuctionList.objects.get(user_id=user_id, item_number=item_number)
+    auction_instance.end_time = datetime.now()
+    auction_instance.is_active = False
+    auction_instance.save()
+    return None

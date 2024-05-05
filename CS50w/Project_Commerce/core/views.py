@@ -24,7 +24,7 @@ def register(request):
                 bio=cleaned_data['bio']
             ) 
             login(request, user)  
-            return HttpResponseRedirect(reverse("core/register.html"))
+            return HttpResponseRedirect(reverse("auctions:index"))
     else:
         form = UserRegistrationForm()
     return render(request, "core/register.html", {"form": form})

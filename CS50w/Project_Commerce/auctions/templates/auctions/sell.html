@@ -4,11 +4,11 @@
 
 
 {% block body %}
-
+<div class="form-container">
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Publish!</button>
 </form>
-
+</div>
 {% endblock %}

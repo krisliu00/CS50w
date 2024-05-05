@@ -1,0 +1,52 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}Auctions{% endblock %}
+
+
+{% block body %}
+<div class="amyauction_items">
+<h2 id="myauction_text">My Auciton</h2>
+<div class="myauction_listing">
+{% for paths, item_numbers in myauction_list %}
+<div class="myauction_item">
+    <a href="{% url 'auctions:bidding' item_numbers %}" style="text-decoration: none">
+        <img src="{{ paths }}" alt="Auction Image" style="cursor: pointer" target="_blank">
+    </a>
+</div>
+{% endfor %}
+</div>
+</div>
+<div class="myauction_contaier">
+<div class="myauction_comment">
+<h2>My Comments</h2>
+<ul>
+{% for title, comments in comment_mapping.items %}
+    <li>{{ title }}:</li>
+    {% for comment in comments %}
+        <ul>{{ comment }}</ul>
+    {% endfor %}
+{% endfor %}
+</ul>
+</div>
+<div class="myauction_bidding">
+<h2>My Bidding</h2>
+<ul>
+    {% if won_items %}
+    <div class="won-items"> 
+        {% for item_number, item_data in won_items.items %}
+            <a href="{% url 'auctions:bidding' item_number %}"  style="text-decoration: none">
+                {{ item_data.title }} : {{ item_data.bid_amount }}$  &nbsp&nbspYou Won!
+            </a>
+        {% endfor %} 
+    </div>    
+    {% endif %}
+    {% for title, bids in bidding_mapping.items %}
+        <li>{{ title }}:</li>
+        {% for bid in bids %}
+            <ul>{{ bid }}$</ul>
+        {% endfor %}
+    {% endfor %}
+</ul>
+</div>
+</div>
+{% endblock %}

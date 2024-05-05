@@ -1,0 +1,19 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}Auctions{% endblock %}
+
+
+{% block body %}
+<div class="watchlist_items">
+<h2 id="watchlist_text">My Watchlist</h2>
+<div class="watchlist_listing">
+{% for watchlist_image, item_number in watchlist_item_with_images %}
+<div class="watchlist_item">
+    <a href="{% url 'auctions:bidding' item_number %}" style="text-decoration: none">
+        <img src="{{ watchlist_image }}" alt="Watchlist Image" style="cursor: pointer" target="_blank">
+    </a>
+</div>
+{% endfor %}
+</div>
+</div>
+{% endblock %}
