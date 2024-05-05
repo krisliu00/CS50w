@@ -1,18 +1,29 @@
 {% extends "auctions/layout.html" %}
 
-{% block title %}Auctions{% endblock %}
+{% block title %}Categories{% endblock %}
 
 
 {% block body %}
-<h2>Categories</h2>
-{% for category, items in category_items.items %}
-    <a href="{% url 'auctions:sublist' category=category %}">{{ category }}</a>
-    <ul>
-        {% for item in items %}
-        <a href="{% url 'auctions:bidding' item.item_number %}" style="text-decoration: none">
-            <img src="{{ MEDIA_URL }}/{{ item.image_path }}" alt="Auction Image" style="cursor: pointer" target="_blank">
-        </a>
+<div class="category_items">
+    <h2 id="category_text">Categories</h2>
+    <div class="category_listing">
+        {% for category, items in category_items.items %}
+            <div class="category_item">
+                <a href="{% url 'auctions:sublist' category=category %}">
+                    <span class="category_name">{{ category }}</span>
+                </a>
+                <ul>
+                    {% for item in items %}
+                        <li>
+                            <a href="{% url 'auctions:bidding' item.item_number %}" style="text-decoration: none">
+                                <img src="{{ MEDIA_URL }}/{{ item.image_path }}" alt="Auction Image" style="cursor: pointer" target="_blank">
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
         {% endfor %}
-    </ul>
-{% endfor %}
+    </div>
+</div>
+
 {% endblock %}

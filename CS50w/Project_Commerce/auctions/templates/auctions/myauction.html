@@ -4,14 +4,20 @@
 
 
 {% block body %}
-
-<h2>My Auciton</h2>
+<div class="amyauction_items">
+<h2 id="myauction_text">My Auciton</h2>
+<div class="myauction_listing">
 {% for paths, item_numbers in myauction_list %}
+<div class="myauction_item">
     <a href="{% url 'auctions:bidding' item_numbers %}" style="text-decoration: none">
         <img src="{{ paths }}" alt="Auction Image" style="cursor: pointer" target="_blank">
     </a>
+</div>
 {% endfor %}
-
+</div>
+</div>
+<div class="myauction_contaier">
+<div class="myauction_comment">
 <h2>My Comments</h2>
 <ul>
 {% for title, comments in comment_mapping.items %}
@@ -21,7 +27,8 @@
     {% endfor %}
 {% endfor %}
 </ul>
-
+</div>
+<div class="myauction_bidding">
 <h2>My Bidding</h2>
 <ul>
 {% for title, bids in bidding_mapping.items %}
@@ -31,5 +38,6 @@
     {% endfor %}
 {% endfor %}
 </ul>
-
+</div>
+</div>
 {% endblock %}

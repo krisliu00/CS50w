@@ -5,137 +5,132 @@
 
 {% block body %}
 <div class="item_set">
-    <div class="item_images">
-        {% for image in images %}
-            <img src="{{ MEDIA_URL }}items/{{ item_number }}/{{ image }}" alt="images">
-        {% endfor %}
-        <img src="{{ auction.image_url }}" style="max-width: 300px; max-height: 350px;">
+    <div class="left_column">
+        <div class="item_images">
+            {% for image in images %}
+                <img src="{{ MEDIA_URL }}items/{{ item_number }}/{{ image }}" alt="images">
+            {% endfor %}
+            <img src="{{ auction.image_url }}" style="max-width: 300px; max-height: 350px;">
+        </div>
+        <div class="item_details">
+            <h3>Title</h3>
+            <p>{{ auction.title }}</p>
+            <h3>Details</h3>
+            <p>{{ auction.details|linebreaksbr }}</p>
+            <h3>Starting price</h3>
+            <p>{{ auction.price }}</p>
+            <h3>Current Price</h3>
+            <p>{{ highest_bid }}</p>
+        </div>
     </div>
-    <div>
-        <h3>Category</h3>
-            {{ auction.category }}
-    </div>
-    <div>
-        <h4>Title</h4>
-        {{ auction.title }}
-    </div>
-    <div>
-        <h4>Description</h4>
-        {{ auction.short_description }}
-    </div>
-    <div>
-        <h4>Details</h4>
-        {{ auction.details }}
-    </div>
-    <div>
-        <h4>Starting price</h4>
-        {{ auction.price }}
-    </div>
-    <div>
-        <h4>Current Price</h4>
-        {{ highest_bid }}
-    </div>
-    <div>
-        <h4>Close Time</h4>
-        {{ auction.end_time }}
-    </div>
-    <div>
-        <h4>Created by</h4>
-        {{ auction.user }}
-    </div>
-    {% if user.is_authenticated %}
-        {% if auction.is_active %}
-            {% if not is_creator %}
-            <div>
-            <form method="post">            
-                {% csrf_token %}
-                {{ bidform.as_p }}           
-                <button type="submit">Place a bid!</button>
-            </form>           
-                {% if messages %}
-                <ul class="messages">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-                </ul>
-                {% endif %}
-            </div>
-            {% endif %}
-            <div>
-            <form method="post">
-                {% csrf_token %}
-                {{ commentform.as_p }} 
-                <button type="submit">Submit</button>
-            </form>
-            </div>
-        {% endif %}
-    {% endif %}
-    <div>
-        <h4>Bidding</h4>
-        {% for obj in biddings %} 
-        
-        {{ obj.user }}        
-        {{ obj.bid}} 
-        
-        {% endfor %}
-    </div>
-    <div>
-        <h4>Comment</h4>
-        {% for obj in comments %} 
-        
-        {{ obj.user }}        
-        {{ obj.comment }} 
-        
-        {% endfor %}
-     
-    </div>
+    <div class="right_column">
+        <div class="item_info">
+            <h3>Created by</h3>
+            <p>{{ auction.user }}</p>
+            <h3>Description</h3>
+            <p>{{ auction.short_description }}</p>
+            <h3>Close Time</h3>
+            <p>{{ auction.end_time }}</p>
+        </div>
     {% if auction.is_active %}
         {% if user.is_authenticated %}
             {% if not is_creator %}
-            <div>
                 <form action="{% url 'auctions:watchlist' %}" method="post">
                     {% csrf_token %}
                     <input type="hidden" name="item_number" value="{{ item_number }}">
                     {% if item_in_watchlist %}
-                        <button type="submit">Remove from my watchlist</button>
+                        <button type="submit" class="watchlist-button">Remove from my watchlist</button>
                     {% else %}
-                        <button type="submit">Add to my watchlist</button>
+                        <button type="submit" class="watchlist-button">Add to my watchlist</button>
                     {% endif %}
                 </form>
-            </div>
             {% endif %}
         
             {% if is_creator %}
                 <form action="{% url 'auctions:closelist' %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="item_number" value="{{ item_number }}">
-                <button type="submit">Close auction</button>
+                    {% csrf_token %}
+                    <input type="hidden" name="item_number" value="{{ item_number }}">
+                    <button type="submit" class="close-auction-button">Close auction</button>
                 </form>
             {% endif %}
         {% endif %}
     {% endif %}
-{% if not auction.is_active %}
-    {% if winner %}
-        {% if user.is_authenticated %}
-            {% if winner == request.user %}
-                <div>
-                    <h4>Congratulations, you win!</h4>
+    {% if not auction.is_active %}
+        {% if winner %}
+            {% if user.is_authenticated %}
+                {% if winner == request.user %}
+                    <div class="winner-congrats">
+                        <h4>Congratulations, you win!</h4>
+                    </div>
+                {% else %}
+                <div class="closed-auction">
+                    <h2>This auction is closed</h2>  
+                    <div class="winner-details">
+                        <h4>Winner is</h4>
+                        <p class="winner">{{ winner }}</p>
+                        <p class="highest-bid">{{ highest_bid }}</p>
+                    </div>
                 </div>
+                {% endif %}
             {% else %}
-        <div>
-            <h4>This auction is closed</h4>  
-            <h4>Winner is</h4>
-            {{ winner }}
-            {{ highest_bid }} 
-        </div>
+            <div class="closed-auction">
+                <h4>Winner is</h4>
+                <div class="winner-details">
+                    <p class="winner">{{ winner }}</p>
+                    <p class="highest-bid">{{ highest_bid }}</p>
+                </div>
+            </div>
             {% endif %}
-        {% else %}
-        <div>
-            <h4>Winner is</h4>
-            {{ winner }}
-            {{ highest_bid }} 
-        </div>
         {% endif %}
     {% endif %}
-{% endif %}
+    </div>
+</div>
+<div class="actions">
+    <div class="bidding">
+        <h4>Bidding</h4>
+        {% for obj in biddings %} 
+        <p>
+            {{ obj.user }} - {{ obj.bid }}
+        </p>
+        {% endfor %}
+    </div>
+    <div class="comment">
+        <h4>Comment</h4>
+        {% for obj in comments %} 
+        <p>
+            {{ obj.user }} - {{ obj.comment }}
+        </p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="bid_comment_form">
+    {% if user.is_authenticated %}
+        {% if auction.is_active %}
+            {% if not is_creator %}
+                <div class="bid-form">
+                <form method="post">            
+                    {% csrf_token %}
+                    {{ bidform.as_p }}           
+                <button class="formbutton bid-button" type="submit">Place a bid!</button>
+                </form>           
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                </div>
+            {% endif %}
+            <div class="comment-form">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ commentform.as_p }} 
+                    <button class="formbutton comment-button" type="submit">Submit</button>
+                </form>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
 {% endblock %}
