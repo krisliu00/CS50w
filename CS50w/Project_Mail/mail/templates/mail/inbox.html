@@ -11,6 +11,8 @@
     <a class="btn btn-sm btn-danger" href="{% url 'logout' %}">Log Out</a>
     <hr>
 
+
+    
     <div id="emails-view">
     </div>
     <div id="compose-view">
@@ -29,17 +31,28 @@
             <input type="submit" id="compose_submit" class="btn btn-primary"/>
         </form>
     </div>
+
+    <dl id="mail_content" class="row">
+        <dt class="col-sm-3"></dt>
+        <dd class="col-sm-9"></dd>
+        <dt class="col-sm-3"></dt>
+        <dd class="col-sm-9">
+            <p></p>
+            <p></p>
+        </dd>
+    </dl>
     
     <div id="mailbox_content" class="list-group">
         <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
         <div class="d-flex w-100 justify-content-between">
         <h5 class="mb-1"></h5>
         <small></small>
-        <p class="mb-1"></p>
+        <p class="mb-1"><span type="button" class="btn btn-primary" data-bs-toggle="button"></span></p>
         <small></small>
+        <span class="badge bg-primary rounded-pill">
+        </span>
         </a>
     </div>
-
     
 {% endblock %}
 
