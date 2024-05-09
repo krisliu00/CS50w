@@ -8,11 +8,12 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   document.querySelector('#compose').addEventListener('click', compose_email);
   document.querySelector('#sent').addEventListener('click', () => {
+    load_mailbox('sent');
     sent_mailbox(); 
   });
 
   document.querySelector('#archived').addEventListener('click', () => {
-    load_mailbox('archive');
+    load_mailbox('archived');
     archive_mailbox();
   
 });
@@ -39,11 +40,12 @@ document.addEventListener('DOMContentLoaded', function() {
   function load_mailbox(mailbox) {
     document.querySelector('#emails-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
-    document.querySelector('#mail_content').style.display = 'none';
+    document.querySelector('#mail_content').style.display = 'block';
     document.querySelector('#mailbox_content').style.display = 'block';
     
   
     document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+    
   }
 
 
@@ -68,8 +70,9 @@ document.addEventListener('DOMContentLoaded', function() {
     .catch(error => console.error('error sending message', error));
   }
 
-function renderEmails(emails) {
+function renderEmails(emails, mailboxType) {
   const emailsContent = document.getElementById('mailbox_content');
+  emailsContent.dataset.mailboxType = mailboxType;
   emailsContent.innerHTML = '';
 
   emails.forEach(email => {
@@ -98,7 +101,7 @@ function renderEmails(emails) {
 
 function inbox_mailbox() {
     document.querySelector('#mailbox_content').style.display = 'block';
-    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#emails-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
     document.querySelector('#mail_content').style.display = 'none';
     
@@ -107,14 +110,17 @@ function inbox_mailbox() {
         method: 'GET'
     })
     .then(response => response.json())
-    .then(emails => {  renderEmails(emails);})
+    .then(emails => {
+      const mailboxType = 'inbox'; 
+      renderEmails(emails, mailboxType);
+    })
     .catch(error => {
         console.error('Error fetching inbox emails:', error);
     });
 }
 
 function sent_mailbox() {
-    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#emails-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
     document.querySelector('#mail_content').style.display = 'none';
     document.querySelector('#mailbox_content').style.display = 'block';
@@ -130,7 +136,7 @@ function sent_mailbox() {
 }
 
 function archive_mailbox() {
-    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#emails-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
     document.querySelector('#mail_content').style.display = 'none';
     document.querySelector('#mailbox_content').style.display = 'block';
@@ -139,7 +145,10 @@ function archive_mailbox() {
         method: 'GET'
     })
     .then(response => response.json())
-    .then(emails => renderEmails(emails))
+    .then(emails => {
+      const mailboxType = 'archived'; 
+      renderEmails(emails, mailboxType);
+    })
     .catch(error => {
         console.error('Error fetching sent emails:', error);
     });
@@ -155,33 +164,41 @@ function renderEmailContents(email) {
   const emailDiv = document.createElement('dl');
   emailDiv.dataset.id = email.id;
   emailDiv.dataset.archived = email.archived;
+  const mailboxContent = document.getElementById('mailbox_content');
+  const mailboxType = mailboxContent.dataset.mailboxType;
 
-    if (!email.archived) {
-      emailDiv.innerHTML = `
-          <dd class="col-sm-9">${email.timestamp}</dd>
-          <dt class="col-sm-3">From:&nbsp${email.sender} &nbsp&nbsp&nbspTo:&nbsp${email.recipients}</dt>
-          <dt class="col-sm-3">Subject</dt>
-          <dd class="col-sm-9">
-            <p>${email.subject}</p>
-            <p>${email.body}</p>
-          </dd>
-      `;
-    } else {
-      emailDiv.innerHTML = `
-          <dd class="col-sm-9">${email.timestamp}</dd>
-          <dt class="col-sm-3">From:&nbsp${email.sender} &nbsp&nbsp&nbspTo:&nbsp${email.recipients}</dt>
-          <dt class="col-sm-3">Subject</dt>
-          <dd class="col-sm-9">
-            <p>${email.subject}</p>
-            <p>${email.body}</p>
-          </dd>
-      `;
-    }
+  const inboxHTML = mailboxType === 'inbox' ?
+  `
+  <button type="button" class="btn btn-success">Archive</button>
+  <button class="btn btn-primary">Reply</button>
+  ` :
+  '';
+
+  const archiveboxHTML = mailboxType === 'archived' ?
+  `
+  <button id="archive-button" type="button" class="btn btn-success">UnArchive</button>
+  ` :
+  '';
+
+  emailDiv.innerHTML = `
+    <dl id="mail_content" class="row">
+      <dt class="col-sm-3">Subject</dt>
+      <dd class="col-sm-9">${email.subject}</dd>
+
+      <dt class="col-sm-3">${email.timestamp}</dt>
+      <dd class="col-sm-9">
+          <p>From:&nbsp${email.sender} &nbsp&nbsp&nbspTo:&nbsp${email.recipients}</p>
+          <p>${email.body}</p>
+      </dd>
+    </dl>
+    ${inboxHTML}
+    ${archiveboxHTML}
+  `;
 
     emailsContent.appendChild(emailDiv);
 }
 
-function mailContent(emailId) {
+function mailContent(emailId, mailbox) {
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#mailbox_content').style.display = 'none';
@@ -193,7 +210,7 @@ function mailContent(emailId) {
   .then(response => response.json())
   .then(email => {
     console.log('Returned emails:', email);
-    renderEmailContents(email);
+    renderEmailContents(email, mailbox);;
   })
   .catch(error => {
     console.error('Error fetching inbox email:', error);
