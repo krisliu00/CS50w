@@ -109,7 +109,7 @@ function renderEmails(emails, mailboxType) {
       `;
       emailDiv.addEventListener('click', function() {
         const emailId = this.dataset.id;
-        mailContent(emailId) ; 
+        mailContent(emailId, mailboxType) ; 
       });
       emailsContent.appendChild(emailDiv);
       
@@ -190,6 +190,7 @@ function renderEmailContents(email) {
   const inboxHTML = mailboxType === 'inbox' ?
   `
   <button id="archive-button" type="button" class="btn btn-success">Archive</button>
+  <button id="reply-button" type="button" class="btn btn-primary">Reply</button>
   ` :
   '';
   const archiveboxHTML = mailboxType === 'archived' ?
@@ -215,16 +216,22 @@ function renderEmailContents(email) {
 
     emailsContent.appendChild(emailDiv);
     const archiveButton = document.getElementById('archive-button');
+    const replyButton = document.getElementById('reply-button');
+    
   if (archiveButton) {
     archiveButton.addEventListener('click', () => {
       archived(email.id)
-      console.log('Archive button clicked');
       document.querySelector('#inbox').click();
     });
   }
+  if (replyButton) {
+    replyButton.addEventListener('click', () => {
+      replyToEmail(email)
+  });
+  }
 }
 
-function mailContent(emailId, mailbox) {
+function mailContent(emailId, mailboxType) {
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#mailbox_content').style.display = 'none';
@@ -237,55 +244,48 @@ function mailContent(emailId, mailbox) {
   .then(response => response.json())
   .then(email => {
     console.log('Returned emails:', email);
-    renderEmailContents(email, mailbox);
-
-    const replyButton = document.createElement('button');
-    replyButton.textContent = 'Reply';
-    replyButton.addEventListener('click', () => {
-      replyToEmail(email);
-    })
-    document.querySelector('#mail_content').appendChild(replyButton);
+    renderEmailContents(email, mailboxType);
   })
   .catch(error => {
     console.error('Error fetching inbox email:', error);
   });
-  function replyToEmail(email) {
-    const replyForm = document.querySelector('#reply-form');
-    const inputLabel = document.querySelector('label[for="exampleFormControlInput1"]');
-    const inputField = document.querySelector('#exampleFormControlInput1');
-    const textareaField = document.querySelector('#exampleFormControlTextarea1');
-    const submitButton = document.querySelector('#reply_submit');
-  
-    document.querySelector('#emails-view').style.display = 'none';
-    document.querySelector('#compose-view').style.display = 'none';
-    document.querySelector('#mailbox_content').style.display = 'none';
-    document.querySelector('#mail_content').style.display = 'none';
-    replyForm.style.display = 'block';
-  
-    const senderArray = email.sender.split(',');
-  
-    inputLabel.textContent = `To: ${senderArray}`;
-    inputField.value = `Re: ${email.subject}`;
-    textareaField.value = `\n\nOn ${email.timestamp}, ${email.sender} wrote:\n${email.body}`;
-    submitButton.value = `Submit`;
+}
+function replyToEmail(email) {
+  const replyForm = document.querySelector('#reply-form');
+  const inputLabel = document.querySelector('label[for="exampleFormControlInput1"]');
+  const inputField = document.querySelector('#exampleFormControlInput1');
+  const textareaField = document.querySelector('#exampleFormControlTextarea1');
+  const submitButton = document.querySelector('#reply_submit');
 
-    submitButton.addEventListener('click', function(event) {
-      event.preventDefault(); 
-  
-      const recipients = senderArray.join(', ');
-      const subject = inputField.value;
-      const body = textareaField.value;
-  
-      sendReplyEmail(recipients, subject, body)
-        .then(data => {
-          console.log('Email sent successfully:', data);
-          inbox_mailbox();
-        })
-        .catch(error => {
-          console.error('Error sending email:', error);
-        });
-    });
-  }
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#mailbox_content').style.display = 'none';
+  document.querySelector('#mail_content').style.display = 'none';
+  replyForm.style.display = 'block';
+
+  const senderArray = email.sender.split(',');
+
+  inputLabel.textContent = `To: ${senderArray}`;
+  inputField.value = email.subject.startsWith("Re:") ? email.subject : `Re: ${email.subject}`;
+  textareaField.value = `\n\nOn ${email.timestamp}, ${email.sender} wrote:\n${email.body}`;
+  submitButton.value = `Submit`;
+
+  submitButton.addEventListener('click', function(event) {
+    event.preventDefault(); 
+
+    const recipients = senderArray.join(', ');
+    const subject = inputField.value;
+    const body = textareaField.value;
+
+    sendReplyEmail(recipients, subject, body)
+      .then(data => {
+        console.log('Email sent successfully:', data);
+        inbox_mailbox();
+      })
+      .catch(error => {
+        console.error('Error sending email:', error);
+      });
+  });
   
 }
 function archived(emailId) {
