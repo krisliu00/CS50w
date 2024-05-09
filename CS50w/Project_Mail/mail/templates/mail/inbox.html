@@ -41,7 +41,15 @@
             <p></p>
         </dd>
     </dl>
-    
+
+    <div id="reply-form" class="mb-3">
+    <label for="exampleFormControlInput1" class="form-label"></label>
+    <input type="email" class="form-control" id="exampleFormControlInput1">
+    <label for="exampleFormControlTextarea1" class="form-label"></label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="10"></textarea>
+    <input type="submit" id="reply_submit" class="btn btn-primary"/>
+    </div>
+
     <div id="mailbox_content" class="list-group">
         <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
         <div class="d-flex w-100 justify-content-between">
@@ -53,6 +61,8 @@
         </span>
         </a>
     </div>
+
+    
     
 {% endblock %}
 
