@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     send_email(); 
   });
 
+  load_mailbox('inbox')
   inbox_mailbox();
 
   function compose_email() {
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('#compose-view').style.display = 'block';
     document.querySelector('#mailbox_content').style.display = 'none';
     document.querySelector('#mail_content').style.display = 'none';
+    document.querySelector('#reply-form').style.display = 'none';
     
     document.querySelector('#compose-recipients').value = '';
     document.querySelector('#compose-subject').value = '';
@@ -40,21 +42,17 @@ document.addEventListener('DOMContentLoaded', function() {
   function load_mailbox(mailbox) {
     document.querySelector('#emails-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
-    document.querySelector('#mail_content').style.display = 'block';
-    document.querySelector('#mailbox_content').style.display = 'block';
+    document.querySelector('#mail_content').style.display = 'none';
+    document.querySelector('#mailbox_content').style.display = 'none';
+    document.querySelector('#reply-form').style.display = 'none';
     
   
     document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
     
   }
 
-
-  function send_email() {
-    const recipients = document.getElementById("compose-recipients").value;
-    const subject = document.getElementById("compose-subject").value;
-    const body = document.getElementById("compose-body").value;
-  
-    fetch('/emails', {
+  function sendReplyEmail(recipients, subject, body) {
+    return fetch('/emails', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -66,9 +64,28 @@ document.addEventListener('DOMContentLoaded', function() {
       })
     })
     .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.error('error sending message', error));
+    .then(data => {
+      console.log(data);
+      return data; 
+    })
+    .catch(error => {
+      console.error('error sending message', error);
+      throw error;
+    });
   }
+  
+  function send_email() {
+    const recipients = document.getElementById("compose-recipients").value;
+    const subject = document.getElementById("compose-subject").value;
+    const body = document.getElementById("compose-body").value;
+  
+    sendReplyEmail(recipients, subject, body)
+      .then(inbox_mailbox())
+      .catch(error => {
+        console.error('error sending message', error)
+      });
+  }
+
 
 function renderEmails(emails, mailboxType) {
   const emailsContent = document.getElementById('mailbox_content');
@@ -92,7 +109,7 @@ function renderEmails(emails, mailboxType) {
       `;
       emailDiv.addEventListener('click', function() {
         const emailId = this.dataset.id;
-        mailContent(emailId) ; 
+        mailContent(emailId, mailboxType) ; 
       });
       emailsContent.appendChild(emailDiv);
       
@@ -103,6 +120,7 @@ function inbox_mailbox() {
     document.querySelector('#mailbox_content').style.display = 'block';
     document.querySelector('#emails-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
+    document.querySelector('#reply-form').style.display = 'none';
     document.querySelector('#mail_content').style.display = 'none';
     
 
@@ -123,6 +141,7 @@ function sent_mailbox() {
     document.querySelector('#emails-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
     document.querySelector('#mail_content').style.display = 'none';
+    document.querySelector('#reply-form').style.display = 'none';
     document.querySelector('#mailbox_content').style.display = 'block';
 
     fetch('/emails/sent', {
@@ -139,6 +158,7 @@ function archive_mailbox() {
     document.querySelector('#emails-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
     document.querySelector('#mail_content').style.display = 'none';
+    document.querySelector('#reply-form').style.display = 'none';
     document.querySelector('#mailbox_content').style.display = 'block';
 
     fetch('/emails/archive', {
@@ -169,11 +189,10 @@ function renderEmailContents(email) {
 
   const inboxHTML = mailboxType === 'inbox' ?
   `
-  <button type="button" class="btn btn-success">Archive</button>
-  <button class="btn btn-primary">Reply</button>
+  <button id="archive-button" type="button" class="btn btn-success">Archive</button>
+  <button id="reply-button" type="button" class="btn btn-primary">Reply</button>
   ` :
   '';
-
   const archiveboxHTML = mailboxType === 'archived' ?
   `
   <button id="archive-button" type="button" class="btn btn-success">UnArchive</button>
@@ -196,12 +215,27 @@ function renderEmailContents(email) {
   `;
 
     emailsContent.appendChild(emailDiv);
+    const archiveButton = document.getElementById('archive-button');
+    const replyButton = document.getElementById('reply-button');
+    
+  if (archiveButton) {
+    archiveButton.addEventListener('click', () => {
+      archived(email.id)
+      document.querySelector('#inbox').click();
+    });
+  }
+  if (replyButton) {
+    replyButton.addEventListener('click', () => {
+      replyToEmail(email)
+  });
+  }
 }
 
-function mailContent(emailId, mailbox) {
+function mailContent(emailId, mailboxType) {
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#mailbox_content').style.display = 'none';
+  document.querySelector('#reply-form').style.display = 'none';
   document.querySelector('#mail_content').style.display = 'block';
 
   fetch(`/emails/${emailId}`, {
@@ -210,36 +244,89 @@ function mailContent(emailId, mailbox) {
   .then(response => response.json())
   .then(email => {
     console.log('Returned emails:', email);
-    renderEmailContents(email, mailbox);;
+    renderEmailContents(email, mailboxType);
   })
   .catch(error => {
     console.error('Error fetching inbox email:', error);
   });
-
 }
-// function archived(emailId) {
-//   document.querySelector('#emails-view').style.display = 'none';
-//   document.querySelector('#compose-view').style.display = 'none';
-//   document.querySelector('#mailbox_content').style.display = 'none';
-//   document.querySelector('#mail_content').style.display = 'block';
+function replyToEmail(email) {
+  const replyForm = document.querySelector('#reply-form');
+  const inputLabel = document.querySelector('label[for="exampleFormControlInput1"]');
+  const inputField = document.querySelector('#exampleFormControlInput1');
+  const textareaField = document.querySelector('#exampleFormControlTextarea1');
+  const submitButton = document.querySelector('#reply_submit');
 
-//   fetch(`/emails/${emailId}`, {
-//     method: 'PUT',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify({
-//       archived: true
-//     })
-//   })
-//   .then(response => {
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! Status: ${response.status}`);
-//     }
-//   })
-//   .catch(error => {
-//     console.error('Error archiving email:', error);
-//   });
-// }
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#mailbox_content').style.display = 'none';
+  document.querySelector('#mail_content').style.display = 'none';
+  replyForm.style.display = 'block';
+
+  const senderArray = email.sender.split(',');
+
+  inputLabel.textContent = `To: ${senderArray}`;
+  inputField.value = email.subject.startsWith("Re:") ? email.subject : `Re: ${email.subject}`;
+  textareaField.value = `\n\nOn ${email.timestamp}, ${email.sender} wrote:\n${email.body}`;
+  submitButton.value = `Submit`;
+
+  submitButton.addEventListener('click', function(event) {
+    event.preventDefault(); 
+
+    const recipients = senderArray.join(', ');
+    const subject = inputField.value;
+    const body = textareaField.value;
+
+    sendReplyEmail(recipients, subject, body)
+      .then(data => {
+        console.log('Email sent successfully:', data);
+        inbox_mailbox();
+      })
+      .catch(error => {
+        console.error('Error sending email:', error);
+      });
+  });
+  
+}
+function archived(emailId) {
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#mailbox_content').style.display = 'none';
+  document.querySelector('#mail_content').style.display = 'block';
+  document.querySelector('#reply-form').style.display = 'none';
+
+  fetch(`/emails/${emailId}`)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(email => {
+    const newArchivedState = !email.archived;
+
+    fetch(`/emails/${emailId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        archived: newArchivedState
+      })
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      inbox_mailbox();
+    })
+    .catch(error => {
+      console.error('Error archiving email:', error);
+    });
+  })
+  .catch(error => {
+    console.error('Error fetching email:', error);
+  });
+}
 
 });
