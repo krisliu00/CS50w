@@ -99,6 +99,14 @@ function renderEmails(emails, mailboxType) {
       emailDiv.dataset.archived = email.archived
       emailDiv.dataset.read = email.read
 
+      const mailboxContent = document.getElementById("mailbox_content");
+
+      const readColor = (email.read && mailboxType === 'inbox') 
+        ? "rgba(128, 128, 128, 0.15)"
+        : ""; 
+      emailDiv.style.backgroundColor = readColor;
+
+
       const inboxHTML = mailboxType === 'inbox' ?
       `
       <span class="badge text-bg-warning">${email.read ? 'Read' : 'Unread'}</span>
