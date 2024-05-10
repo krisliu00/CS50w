@@ -97,23 +97,54 @@ function renderEmails(emails, mailboxType) {
       emailDiv.classList.add('list-group-item', 'list-group-item-action');
       emailDiv.dataset.id = email.id;
       emailDiv.dataset.archived = email.archived
-      
+      emailDiv.dataset.read = email.read
 
+      const inboxHTML = mailboxType === 'inbox' ?
+      `
+      <span class="badge text-bg-warning">${email.read ? 'Read' : 'Unread'}</span>
+      ` :
+      '';
       emailDiv.innerHTML = `
           <div class="d-flex w-100 justify-content-between">
               <h5 class="mb-1">${email.subject}</h5>
-              <small>${email.timestamp}</small>
+              <small>${email.timestamp}<br>
+              ${inboxHTML}
+              </small>
           </div>
           <p class="mb-1">${email.body}</p>
           <small>From: ${email.sender} To: ${email.recipients}</small>
       `;
       emailDiv.addEventListener('click', function() {
         const emailId = this.dataset.id;
+        readEmail(emailId);
         mailContent(emailId, mailboxType) ; 
       });
       emailsContent.appendChild(emailDiv);
-      
   });
+
+  function readEmail(emailId) {
+    fetch(`/emails/${emailId}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(email => {
+      const emailRead = email.read;
+      if (!emailRead) {
+        return fetch(`/emails/${emailId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            read: true
+          })
+        })
+      }
+    })
+  }
 }
 
 function inbox_mailbox() {
@@ -328,5 +359,6 @@ function archived(emailId) {
     console.error('Error fetching email:', error);
   });
 }
+
 
 });
