@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const body = document.getElementById("compose-body").value;
   
     sendReplyEmail(recipients, subject, body)
-      .then(inbox_mailbox())
+      .then(() => document.querySelector('#sent').click())
       .catch(error => {
         console.error('error sending message', error)
       });
