@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
       var html = converter.makeHtml(markdownText);
       document.getElementById('textarea').innerHTML = html;
       document.getElementById('title').innerHTML = textContent;
-      console.log('Dropdown item text content:', textContent); 
   }
 
   document.querySelectorAll('#links-container .dropdown-item').forEach(link => {
