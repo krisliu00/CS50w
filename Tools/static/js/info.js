@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-
-  daily()
+  daily();
 
   function fetchMarkdown(url, textContent) {
     return fetch(url)
@@ -10,8 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function convertMarkdownToHtml(markdownText, textContent) {
-      var converter = new showdown.Converter();
-      var html = converter.makeHtml(markdownText);
+      var html = marked.parse(markdownText);
       document.getElementById('textarea').innerHTML = html;
       document.getElementById('title').innerHTML = textContent;
   }
@@ -27,10 +25,8 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   function daily(){
-
     const url = 'https://raw.githubusercontent.com/krisliu00/MyLearningStuff/main/Tools/md/Daily.md'
     const textContent = ' '
     fetchMarkdown(url, textContent)
   }
- 
 });

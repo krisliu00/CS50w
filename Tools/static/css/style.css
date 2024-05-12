@@ -14,7 +14,7 @@ hr{
     background-color: rgba(39, 39, 41, 0.5) !important;
 }
 
-code, tt {
+/* code, tt {
     color: white !important;
     padding: .2em .4em;
     margin: 0;
@@ -64,6 +64,6 @@ pre>code {
     word-wrap: normal;
     background-color: transparent;
     border: 0;
-  }
+  } */
 
   
