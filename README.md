@@ -20,7 +20,7 @@ This repository is for my own learning on CS50 lectures. Currently on CS50w.
 
 - **JavaScript**
 - **User Interfaces**
-    - Project Mail
+    - ~~Project Mail~~      <sub>***finished***</sub>
         - Use javascript to create a single-page web application _**Mail**_ under which users can receive/reply/send/archive emails
         - ``` Django/Python/javaScript/Bootstrap```  
 - **Testing, CI/CD**
