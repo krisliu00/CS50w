@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+  daily()
+
   function fetchMarkdown(url, textContent) {
     return fetch(url)
         .then(response => response.text())
@@ -24,4 +26,11 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   });
 
+  function daily(){
+
+    const url = 'https://raw.githubusercontent.com/krisliu00/MyLearningStuff/main/Tools/md/Daily.md'
+    const textContent = ' '
+    fetchMarkdown(url, textContent)
+  }
+ 
 });
