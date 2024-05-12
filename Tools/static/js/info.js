@@ -1,17 +1,50 @@
 document.addEventListener('DOMContentLoaded', function() {
   daily();
+  
+      const copyIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>';
+      const copiedIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16"><path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/></svg>';
+
+      const copyIconElement = document.createElement('div');
+      copyIconElement.innerHTML = copyIcon;
+      const copiedIconElement = document.createElement('div');
+      copiedIconElement.innerHTML = copiedIcon;
+
+      copyIconElement.classList.add('copy-docs-icon');
+      copiedIconElement.classList.add('docs-copied-icon');
+
+      document.body.appendChild(copyIconElement);
+      document.body.appendChild(copiedIconElement);
+
+
 
   function fetchMarkdown(url, textContent) {
-    return fetch(url)
-        .then(response => response.text())
-        .then(markdown => convertMarkdownToHtml(markdown, textContent))
-        .catch(error => console.error('Error fetching Markdown:', error));
+      return fetch(url)
+          .then(response => response.text())
+          .then(markdown => convertMarkdownToHtml(markdown, textContent))
+          .catch(error => console.error('Error fetching Markdown:', error));
   }
 
   function convertMarkdownToHtml(markdownText, textContent) {
       var html = marked.parse(markdownText);
       document.getElementById('textarea').innerHTML = html;
       document.getElementById('title').innerHTML = textContent;
+
+      let blocks = document.querySelectorAll("#textarea pre");
+
+      blocks.forEach((block) => {
+          if (!navigator.clipboard) {
+              return;
+          }
+
+          let button = document.createElement("button");
+          button.className = "button-copy-code";
+          button.innerHTML = copyIcon;
+          block.appendChild(button);
+
+          button.addEventListener("click", async () => {
+              await copyCode(block);
+          });
+      });
   }
 
   document.querySelectorAll('#links-container .dropdown-item').forEach(link => {
@@ -25,8 +58,29 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   function daily(){
-    const url = 'https://raw.githubusercontent.com/krisliu00/MyLearningStuff/main/Tools/md/Daily.md'
-    const textContent = ' '
-    fetchMarkdown(url, textContent)
+      const url = 'https://raw.githubusercontent.com/krisliu00/MyLearningStuff/main/Tools/md/Daily.md'
+      const textContent = ' '
+      fetchMarkdown(url, textContent)
+  }
+
+  async function copyCode(block) {
+      let copiedCode = block.cloneNode(true);
+      copiedCode.removeChild(copiedCode.querySelector("button.button-copy-code"));
+
+      const html = copiedCode.outerHTML.replace(/<[^>]*>?/gm, "");
+
+      block.querySelector("button.button-copy-code").innerHTML = copiedIcon;
+      setTimeout(function () {
+          block.querySelector("button.button-copy-code").innerHTML = copyIcon;
+      }, 2000);
+
+      const parsedHTML = htmlDecode(html);
+
+      await navigator.clipboard.writeText(parsedHTML);
+  }
+
+  function htmlDecode(input) {
+      const doc = new DOMParser().parseFromString(input, "text/html");
+      return doc.documentElement.textContent;
   }
 });

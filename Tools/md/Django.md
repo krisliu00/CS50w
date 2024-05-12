@@ -27,7 +27,8 @@
             ```
     - *urls.py*里加上
         ```
-        urlpatterns = [... ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+        urlpatterns = [... 
+        ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
         ```
     - 最后template里url如下
         ```

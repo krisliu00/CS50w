@@ -345,8 +345,9 @@
 .markdown-body tt,
 .markdown-body code,
 .markdown-body samp {
-  font-family: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;
-  font-size: 12px;
+  font-family: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace !important;
+  font-size: 16px !important;
+  color: rgb(255, 255, 255, 0.8) !important;
 }
 
 .markdown-body pre {
@@ -1082,3 +1083,30 @@
 .markdown-body .markdown-alert.markdown-alert-caution .markdown-alert-title {
   color: #f85149;
 }
+
+#textarea pre {
+  position: relative;
+}
+
+.button-copy-code {
+  position: absolute;
+  top: 6px;
+  right: 3px;
+  background-color: transparent;
+  border: none;
+  opacity: 0.8;
+  transition: color 0.3s ease; 
+}
+
+.button-copy-code.copied {
+  background-color: transparent;
+  border: none;
+  opacity: 0.8;
+}
+
+.button-copy-code:hover {
+  border: none;
+  color: rgba(204, 205, 207, 0.5);
+}
+
+
