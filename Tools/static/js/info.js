@@ -83,4 +83,65 @@ document.addEventListener('DOMContentLoaded', function() {
       const doc = new DOMParser().parseFromString(input, "text/html");
       return doc.documentElement.textContent;
   }
+
+  async function searchInMarkdownFiles(searchTerm) {
+    const queryFiles = document.querySelectorAll('#links-container .dropdown-item');
+    const resultsContainer = document.getElementById("textarea");
+    const fileNameContainer = document.getElementById("title");
+    resultsContainer.innerHTML = "";
+    fileNameContainer.innerHTML = "";
+    let searchResults = [];
+    queryFiles.forEach(link => {
+        const file = link.getAttribute('data-url');
+        fetch(file)
+            .then(response => response.text())
+            .then(text => {
+                const lines = text.split('\n');
+                let inCodeBlock = false;
+                let codeBlockContent = '';
+                let fileName = '';
+    
+                lines.forEach((line, index) => {
+                    if (line.trim().startsWith('```')) {
+                        inCodeBlock = !inCodeBlock;
+                        if (inCodeBlock) {
+                            fileName = file;
+                        } else {
+                            if (codeBlockContent.includes(searchTerm)) {
+                                searchResults.push({ fileName, content: codeBlockContent });
+                            }
+                            codeBlockContent = '';
+                            inCodeBlock = false;
+                        }
+                    } else if (inCodeBlock) {
+                        codeBlockContent += line + '\n'; 
+                    }
+                });
+    
+                if (codeBlockContent.includes(searchTerm)) {
+                    searchResults.push({ fileName, content: codeBlockContent });
+                }
+                if (searchResults.length > 0) {
+                    const markdownText = searchResults.map(result => {
+                        return '```\n' + result.content.trim() + '\n```';
+                    }).join('\n\n');
+                    const textContent = ' '; 
+                    convertMarkdownToHtml(markdownText, textContent);
+                }
+            })
+            .catch(error => {
+                console.error(`Error fetching ${file}:`, error);
+            });
+    });
+}
+
+document.getElementById("searchbar").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const searchTerm = document.getElementById("searchInput").value.trim();
+    if (searchTerm) {
+        searchInMarkdownFiles(searchTerm);
+    } else {
+        alert("Please enter a search term.");
+    }
+});
 });

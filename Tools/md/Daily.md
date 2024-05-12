@@ -1,5 +1,5 @@
 - ```
-  python manage.py migrate --database your_database_alias
+  python manage.py migrate --database database_alias
   ```
   
 - ```
