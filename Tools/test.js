@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function(){
 
+    const originalHtml = document.querySelector('#detail').cloneNode(true);
+
     document.querySelector('#myDropdown').style.display = 'none';
     document.querySelector('#detail').style.display = 'none';
     document.querySelector('#monthdetail').style.display = 'none';
@@ -86,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
     function calcTax() {
-
+        resetToOriginalHtml();
         var salary = parseInt(document.getElementById('salary').value);
         var base = 5000;
         var deductionElement = document.getElementById('deduction');
@@ -130,14 +132,21 @@ document.addEventListener('DOMContentLoaded', function(){
         var tax = [];
         var currentDate = new Date();
         var currentMonth = currentDate.getMonth() + 1;
-        var bonus = parseInt(document.getElementById('bonusinput').value);
+        var bonusValue = document.getElementById('bonusinput');
+        var bonus = bonusValue && bonusValue.value.trim() !== '' ? parseInt(bonusValue.value) : 0;
         var annualIncome = parseFloat(salary) * 12 + parseFloat(bonus) - (parseFloat(socialHousingfund) + parseFloat(deductionValue) + parseFloat(base)) * 12;
 
         var taxListString = '';
         for (var i = 1; i <= 12; i++) {
             var currentMonthRemain = (salary - (socialHousingfund + deductionValue + base)) * i;
-            var taxPercentInfo = getPercent(currentMonthRemain);
-            tax[i] = currentMonthRemain * taxPercentInfo[1] - taxPercentInfo[0] - sumArray(tax);
+            currentMonthRemain = Math.max(currentMonthRemain, 0);
+    
+            if (currentMonthRemain > 0) {
+                var taxPercentInfo = getPercent(currentMonthRemain);
+                tax[i] = currentMonthRemain * taxPercentInfo[1] - taxPercentInfo[0] - sumArray(tax);
+            } else {
+                tax[i] = 0;
+            }
             
             if (i === currentMonth) {
                 var taxAmount = Math.max(tax[i], 0).toFixed(2);
@@ -174,16 +183,25 @@ document.addEventListener('DOMContentLoaded', function(){
 
     function calcAnnual(tax, annualIncome) {
         let salary = parseFloat(document.getElementById('salary').value).toFixed(2);
-        let bonus = parseFloat(document.getElementById('bonusinput').value).toFixed(2);
+        let bonusValue = document.getElementById('bonusinput');
+        let bonus = bonusValue && bonusValue.value.trim() !== '' ? parseInt(bonusValue.value) : 0;
  
         let bonusTaxPercent = getPercentAnnual(bonus);
         let bonusTax = (bonus * bonusTaxPercent[1] - bonusTaxPercent[0]).toFixed(2);
-    
-        let annualTaxPercent = getPercent(annualIncome);
-        let annualTax = (annualIncome * annualTaxPercent[1] - annualTaxPercent[0]).toFixed(2);
-    
+
+        if (annualIncome > 0) {
+            var annualTaxPercent = getPercent(annualIncome);
+            var annualTax = (annualIncome * annualTaxPercent[1] - annualTaxPercent[0]).toFixed(2);
+        } else {
+            var annualTax = 0;
+        }
+        
         let totalTax = tax.reduce((acc, curr) => acc + curr, 0);
         let totalTaxWithBonus = (parseFloat(bonusTax) + totalTax).toFixed(2);
+        // totalTaxWithBonus是综合收入的个税和年终奖的个税分开算
+        // annualTax是年终奖合并到综合收入一起算的个税
+        console.log(totalTaxWithBonus);
+        console.log(annualTax);
     
         let annualTaxResult = (totalTaxWithBonus > annualTax) ? annualTax : totalTaxWithBonus;
 
@@ -192,7 +210,6 @@ document.addEventListener('DOMContentLoaded', function(){
     
         let annualNetSalary = (salary * 12 - annualTaxResult - parseFloat(socialTotal) - parseFloat(housingfundToal)).toFixed(2);
         let annualNetIncome = (parseFloat(annualNetSalary) + parseFloat(housingfundToal)).toFixed(2);
-        
         
         const tableAnnual = document.querySelector('#detail');
         tableAnnual.innerHTML = '';
@@ -218,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 <th scope="row">全年缴税</th>
                 <td id="tax">${annualTaxResult}</td>
               </tr>
-              <tr>
+              <tr class="table-secondary">
                 <th scope="row">税后年薪资</th>
                 <td id="total">${annualNetSalary}</td>
               </tr>
@@ -229,6 +246,14 @@ document.addEventListener('DOMContentLoaded', function(){
             </tbody>
           </table>
         `;
+
+    }
+
+    function resetToOriginalHtml() {
+        const tableAnnual = document.querySelector('#detail');
+        
+        tableAnnual.innerHTML = '';
+        tableAnnual.appendChild(originalHtml.cloneNode(true));
     }
     
 
