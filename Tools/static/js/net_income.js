@@ -9,24 +9,28 @@ document.addEventListener('DOMContentLoaded', function(){
     document.querySelector('#myDropdownButton').addEventListener('click', function() {
         toggleDropdown('myDropdown');
     });
-    document.querySelector('#detailbutton').addEventListener('click', function() {
+    
+    document.querySelector('#detailbutton').addEventListener('click', async function() {
+        var { customBaseHousing, customBaseSocial, housingPercentNormal } = await socialHousingFundValue();
         toggleDropdown('detail');
-        calcTax();
+        calcTax(housingPercentNormal, customBaseHousing, customBaseSocial);
     });
-    document.querySelector('#monthdetailbutton').addEventListener('click', function() {
-        var { tax: tax, socialfundTotal: socialfundTotal } = calcTax();
-
+    
+    document.querySelector('#monthdetailbutton').addEventListener('click', async function() {
+        var { customBaseHousing, customBaseSocial, housingPercentNormal } = await socialHousingFundValue();
+        var { tax, socialfundTotal } = await calcTax(housingPercentNormal, customBaseHousing, customBaseSocial);
         toggleDropdown('monthdetail');
         calcMonth(tax, socialfundTotal);
     });
 
-    document.querySelector('#annualincomebutton').addEventListener('click', function() {
-        var { tax: tax, annualIncome: annualIncome } = calcTax();
-
-        toggleDropdown('detail');
-        calcAnnual(tax, annualIncome);
-    });
+    document.querySelector('#annualincomebutton').addEventListener('click', async function() {
+        var { customBaseHousing, customBaseSocial, housingPercentNormal } = await socialHousingFundValue();
+        var { tax, annualIncome} = await calcTax(housingPercentNormal, customBaseHousing, customBaseSocial);
     
+        toggleDropdown('detail');
+        calcAnnual(tax, annualIncome, customBaseHousing, customBaseSocial, housingPercentNormal);
+    });
+
     function toggleDropdown(elementId) {
         var element = document.getElementById(elementId);
         if (element.style.display === "none") {
@@ -86,8 +90,42 @@ document.addEventListener('DOMContentLoaded', function(){
         return total;
     }
 
+    async function socialHousingFundValue(){
+        var salary = parseInt(document.getElementById('salary').value);
+        var socialBaseInput = document.getElementById('customsocial');
+        var housingBaseInput = document.getElementById('customhousing');
+        var housingPercentInput = document.getElementById('housingpercent');
+        var socialBase = socialBaseInput.value !== '' ? parseInt(socialBaseInput.value) : null;
+        var housingBase = housingBaseInput.value !== '' ? parseInt(housingBaseInput.value) : null;
+        var housingPercent = housingPercentInput.value !== '' ? parseFloat(housingPercentInput.value) : null;
 
-    function calcTax() {
+        var socialRange = [7310, 36549];
+        var housingFundRange = [2590, 36549];
+        var housingPercentNormal = 0.07; 
+
+        if (socialBase !== null) {
+            socialBase = Math.min(Math.max(socialBase, socialRange[0]), socialRange[1]);
+        }
+        if (housingBase !== null) {
+            housingBase = Math.min(Math.max(housingBase, housingFundRange[0]), housingFundRange[1]);
+        }
+        if (housingPercent !== null && housingPercent >= 5 && housingPercent <= 12) {
+            housingPercentNormal = housingPercent / 100;
+        } else if (housingPercentInput.value !== '') {
+            alert("公积金基数在5%-12%之间。");
+            return;
+        }
+
+        
+        var customBaseHousing = housingBase !== null ? housingBase : salary;
+        var customBaseSocial = socialBase !== null ? socialBase : salary;
+        
+        return { customBaseHousing, customBaseSocial, housingPercentNormal };
+
+    }
+
+
+    async function calcTax(housingPercentNormal, customBaseHousing, customBaseSocial) {
         resetToOriginalHtml();
         var salary = parseInt(document.getElementById('salary').value);
         var base = 5000;
@@ -95,55 +133,34 @@ document.addEventListener('DOMContentLoaded', function(){
         
         var deductionValue = deductionElement && deductionElement.value.trim() !== '' ? parseInt(deductionElement.value) : 0;
 
-        var social  = [7310, 36549];
-        var housingfund = [2590, 36549];
-
-        var socialfortax = salary;
-
-        if (salary < social[0]) {
-            socialfortax = social[0];
-        } else if (salary > social[1]) {
-            socialfortax = social[1]
-        }
-
-        var housingfundfortax = salary;
-
-        if (salary < housingfund[0]) {
-            housingfundfortax = housingfund[0];
-        } else if (salary > housingfund[1]) {
-            housingfundfortax = housingfund[1]
-        }
-
-        
-
-        $('#ylgr').text((socialfortax * 0.08).toFixed(2));
-        $('#ybgr').text((socialfortax * 0.02).toFixed(2));
-        $('#sygr').text((socialfortax * 0.005).toFixed(2));
-        $('#gjjgr').text((housingfundfortax * 0.07).toFixed(2));
+        $('#ylgr').text((customBaseSocial * 0.08).toFixed(2));
+        $('#ybgr').text((customBaseSocial * 0.02).toFixed(2));
+        $('#sygr').text((customBaseSocial * 0.005).toFixed(2));
+        $('#gjjgr').text((customBaseHousing * housingPercentNormal).toFixed(2));
     
-        var socialTaxList = [socialfortax * 0.08, socialfortax * 0.02, socialfortax * 0.005];
-        var socialTax= sumArray(socialTaxList);
+        var social = [customBaseSocial * 0.08, customBaseSocial * 0.02, customBaseSocial * 0.005];
+        var socialTax= sumArray(social);
 
-        var housingfundTax = housingfundfortax * 0.07;
-
+        var housingfundTax = customBaseHousing * housingPercentNormal;
 
         var socialHousingfund = socialTax + housingfundTax;
 
-        var tax = [];
+        var tax = new Array(12).fill(0);
         var currentDate = new Date();
         var currentMonth = currentDate.getMonth() + 1;
         var bonusValue = document.getElementById('bonusinput');
         var bonus = bonusValue && bonusValue.value.trim() !== '' ? parseInt(bonusValue.value) : 0;
         var annualIncome = parseFloat(salary) * 12 + parseFloat(bonus) - (parseFloat(socialHousingfund) + parseFloat(deductionValue) + parseFloat(base)) * 12;
-
         var taxListString = '';
+    
         for (var i = 1; i <= 12; i++) {
             var currentMonthRemain = (salary - (socialHousingfund + deductionValue + base)) * i;
             currentMonthRemain = Math.max(currentMonthRemain, 0);
-    
+            // console.log(currentMonthRemain);
             if (currentMonthRemain > 0) {
                 var taxPercentInfo = getPercent(currentMonthRemain);
                 tax[i] = currentMonthRemain * taxPercentInfo[1] - taxPercentInfo[0] - sumArray(tax);
+                console.log(tax[i]);
             } else {
                 tax[i] = 0;
             }
@@ -153,10 +170,12 @@ document.addEventListener('DOMContentLoaded', function(){
                 taxListString = taxAmount;
             }
         }
+        // console.log(tax);
+
         document.getElementById("tax").innerHTML = taxListString;
 
-        var socialTotal = (socialfortax * (0.08 + 0.02 + 0.005)).toFixed(2);
-        var housingfund = (housingfundfortax * 0.07).toFixed(2);
+        var socialTotal = (socialTax).toFixed(2);
+        var housingfund = (housingfundTax).toFixed(2);
         var socialfundTotal = parseFloat(socialTotal) + parseFloat(housingfund)
         
         var personTotal = (parseFloat(socialTotal) + parseFloat(housingfund) + parseFloat(taxListString)).toFixed(2);
@@ -164,11 +183,11 @@ document.addEventListener('DOMContentLoaded', function(){
 
         var afterTaxIncome = (parseFloat(salary) - parseFloat(personTotal)).toFixed(2);
         $('#aftertax').text(afterTaxIncome);
-
-        return { tax: tax, socialfundTotal: socialfundTotal, annualIncome: annualIncome };
+        
+        return { tax, socialfundTotal, annualIncome };
     }
 
-    function calcMonth(tax, socialfundTotal){
+    async function calcMonth(tax, socialfundTotal){
 
         var salary = parseInt(document.getElementById('salary').value);
 
@@ -180,8 +199,8 @@ document.addEventListener('DOMContentLoaded', function(){
 
         }
     }
-
-    function calcAnnual(tax, annualIncome) {
+                   
+    async function calcAnnual(tax, annualIncome, customBaseHousing, customBaseSocial, housingPercentNormal) {
         let salary = parseFloat(document.getElementById('salary').value).toFixed(2);
         let bonusValue = document.getElementById('bonusinput');
         let bonus = bonusValue && bonusValue.value.trim() !== '' ? parseInt(bonusValue.value) : 0;
@@ -196,8 +215,8 @@ document.addEventListener('DOMContentLoaded', function(){
             var annualTax = 0;
         }
         
-        let totalTax = tax.reduce((acc, curr) => acc + curr, 0);
-        let totalTaxWithBonus = (parseFloat(bonusTax) + totalTax).toFixed(2);
+        let totalTaxAll = tax.reduce((acc, curr) => acc + curr, 0);
+        let totalTaxWithBonus = (parseFloat(bonusTax) + totalTaxAll).toFixed(2);
         // totalTaxWithBonus是综合收入的个税和年终奖的个税分开算
         // annualTax是年终奖合并到综合收入一起算的个税
         console.log(totalTaxWithBonus);
@@ -205,8 +224,8 @@ document.addEventListener('DOMContentLoaded', function(){
     
         let annualTaxResult = (totalTaxWithBonus > annualTax) ? annualTax : totalTaxWithBonus;
 
-        let housingfundToal = (salary * 0.07 * 12).toFixed(2);
-        let socialTotal = ((salary * (0.08 + 0.02 + 0.005)) * 12).toFixed(2);
+        let housingfundToal = (customBaseHousing * housingPercentNormal * 12).toFixed(2);
+        let socialTotal = ((customBaseSocial * (0.08 + 0.02 + 0.005)) * 12).toFixed(2);
     
         let annualNetSalary = (salary * 12 - annualTaxResult - parseFloat(socialTotal) - parseFloat(housingfundToal)).toFixed(2);
         let annualNetIncome = (parseFloat(annualNetSalary) + parseFloat(housingfundToal)).toFixed(2);

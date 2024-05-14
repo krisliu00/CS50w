@@ -17,11 +17,11 @@
     ```  
   - 把工作区内所有的文件都还原为上一次commit的状态（撤销所有更改）
     ```
-    git checkout -- .
+    git checkout .
     ```  
   - 撤销单个文件的更改，还原为上一次commit的状态
     ``` 
-    git checkout --file_name
+    git checkout file_name
     ```  
   - 工作区的状态和当前HEAD信息
     ```

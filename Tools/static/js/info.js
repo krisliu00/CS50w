@@ -48,13 +48,15 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   document.querySelectorAll('#links-container .dropdown-item').forEach(link => {
-      link.addEventListener('click', function(event) {
-          event.preventDefault(); 
-          const fileUrl = this.getAttribute('data-url');
-          const textContent = this.textContent.trim(); 
+        if (link.id !== 'calculator') {
+            link.addEventListener('click', function(event) {
+                event.preventDefault(); 
+                const fileUrl = this.getAttribute('data-url');
+                const textContent = this.textContent.trim(); 
 
-          fetchMarkdown(fileUrl, textContent);
-      });
+                fetchMarkdown(fileUrl, textContent);
+            });
+        }
   });
 
   function daily(){
