@@ -10,7 +10,11 @@ hr{
     color: azure;
 }
 
-#textarea{
+#textarea, #calculatorarea{
     background-color: rgba(39, 39, 41, 0.5) !important;
+}
+
+.hidden{
+    display: none !important;
 }
 
