@@ -25,7 +25,7 @@ This repository is for my own learning on CS50 lectures. Currently on CS50w.
         - ``` Django/Python/javaScript/Bootstrap```  
 - **Testing, CI/CD**
     - Project Network
-        - a Django project to build a Twitter-like social network website with functions of users/posts/follw&unfollw/likes etc. this project will be using github actions for CI
+        - a Django project to build a Twitter-like social network website with functions of users/posts/follw&unfollw/likes etc. this project will be using unittest/Selenium for testing and github actions for CI
         - ``` Django/Python/MySQL/javaScript/Bootstrap/Github Actions ```
         
 - **Scalability and Security**
