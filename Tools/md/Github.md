@@ -11,6 +11,10 @@
     ```
     git add file_name
     ```
+  - 所有上次commit后修改的文件更新到缓存区
+    ```
+    git add .
+    ```
   - 在没有commit之前舍弃缓存区的内容
     ```
     git reset HEAD
