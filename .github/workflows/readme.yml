@@ -1,18 +1,29 @@
-name: Deploy to GitHub Pages
+name: Deploy GitHub Pages if README.md changes
 
 on:
   push:
     branches:
       - main
-    paths:
-      - 'README.md'
 
 jobs:
   deploy:
+    name: Deploy if README.md changes
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      # Add your deployment steps here
+    - name: Check if README.md changed
+      id: readme_changed
+      run: |
+        git fetch --no-tags --prune --depth=1 origin +refs/heads/main:refs/remotes/origin/main
+        git diff --name-only origin/main..HEAD | grep -qE '^(README\.md)$'
+
+    - name: Deploy to GitHub Pages
+      if: steps.readme_changed.outputs.result == 'true'
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./ 
+        publish_branch: gh-pages

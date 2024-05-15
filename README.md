@@ -16,7 +16,7 @@ This repository is for my own learning on CS50 lectures. Currently on CS50w.
     - ~~Porject Commerce~~    <sub>***finished***</sub>
         - Creat an auction website with usage of database ***MySQL***
         - ![](https://github.com/krisliu00/MyLearningStuff/blob/306a3c798b5fba61f2e44125336c51c8e0366b6b/Git/FireShot%20Capture%20043%20-%20Untitled%20Diagram.html%20-%20.png)
-        - ``` Django/Python```  
+        - ``` Django/Python/MySQL```  
 
 - **JavaScript**
 - **User Interfaces**
@@ -25,5 +25,8 @@ This repository is for my own learning on CS50 lectures. Currently on CS50w.
         - ``` Django/Python/javaScript/Bootstrap```  
 - **Testing, CI/CD**
     - Project Network
+        - a Django project to build a Twitter-like social network website with functions of users/posts/follw&unfollw/likes etc. this project will be using github actions for CI
+        - ``` Django/Python/MySQL/javaScript/Bootstrap/Github Actions ```
+        
 - **Scalability and Security**
     - Project Capstone
