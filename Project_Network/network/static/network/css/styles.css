@@ -110,4 +110,8 @@ body {
     -webkit-overflow-scrolling: touch;
   }
   
-  
+  #postmain {
+
+    height: 20%;
+  }
+
