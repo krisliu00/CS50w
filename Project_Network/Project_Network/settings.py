@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.backends.RedirectAuthenticatedUsersMiddleware'
 ]
 
 ROOT_URLCONF = 'Project_Network.urls'
@@ -119,6 +120,12 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'core.backends.EmailBackend', 
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 
 
 # Internationalization

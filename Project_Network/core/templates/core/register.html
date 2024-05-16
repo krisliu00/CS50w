@@ -5,7 +5,7 @@
 
 {% block body %}
 <style>body {
-    transform: scale(0.84); /* 80% */
+    transform: scale(0.84);
   }</style>
 <div class="container-fluid mt-0">
     <div class="row d-flex justify-content-center align-items-center">
@@ -15,38 +15,38 @@
             <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='45' height='45' fill='currentColor' class='bi bi-snow' viewBox='0 0 16 16'%3E%3Cpath d='M8 16a.5.5 0 0 1-.5-.5v-1.293l-.646.647a.5.5 0 0 1-.707-.708L7.5 12.793V8.866l-3.4 1.963-.496 1.85a.5.5 0 1 1-.966-.26l.237-.882-1.12.646a.5.5 0 0 1-.5-.866l1.12-.646-.884-.237a.5.5 0 1 1 .26-.966l1.848.495L7 8 3.6 6.037l-1.85.495a.5.5 0 0 1-.258-.966l.883-.237-1.12-.646a.5.5 0 1 1 .5-.866l1.12.646-.237-.883a.5.5 0 1 1 .966-.258l.495 1.849L7.5 7.134V3.207L6.147 1.854a.5.5 0 1 1 .707-.708l.646.647V.5a.5.5 0 1 1 1 0v1.293l.647-.647a.5.5 0 1 1 .707.708L8.5 3.207v3.927l3.4-1.963.496-1.85a.5.5 0 1 1 .966.26l-.236.882 1.12-.646a.5.5 0 0 1 .5.866l-1.12.646.883.237a.5.5 0 1 1-.26.966l-1.848-.495L9 8l3.4 1.963 1.849-.495a.5.5 0 0 1 .259.966l-.883.237 1.12.646a.5.5 0 0 1-.5.866l-1.12-.646.236.883a.5.5 0 1 1-.966.258l-.495-1.849-3.4-1.963v3.927l1.353 1.353a.5.5 0 0 1-.707.708l-.647-.647V15.5a.5.5 0 0 1-.5.5z'/%3E%3C/svg%3E">
             <hr>
             <h2 class="text-uppercase text-center mb-4">Create an account</h2>
-            <form class="text-start" method="post">
+            <form class="text-start" method="post" action="{% url 'core:register' %}">
                 {% csrf_token %}
             <div data-mdb-input-init class="form-outline mb-4 ">
-                <input type="text" id="form3Example1cg" class="form-control form-control-lg" />
+                <input type="text" name="username" id="form3Example1cg" class="form-control form-control-lg" />
                 <label class="form-label" for="form3Example1cg">Your User Name</label>
             </div>
             <div data-mdb-input-init class="form-outline mb-4 ">
-                <input type="text" id="form3Example1cg" class="form-control form-control-lg" />
+                <input type="text" name="customname" id="form3Example1cg" class="form-control form-control-lg" />
                 <label class="form-label" for="form3Example1cg">Your Custom Name</label>
             </div>
             <div data-mdb-input-init class="form-outline mb-4">
-                <input type="email" id="form3Example3cg" class="form-control form-control-lg" />
+                <input type="email" name="email" id="form3Example3cg" class="form-control form-control-lg" />
                 <label class="form-label" for="form3Example3cg">Your Email</label>
             </div>
             <div data-mdb-input-init class="form-outline mb-4">
-                <input type="password" id="form3Example4cg" class="form-control form-control-lg" />
+                <input type="password" name="password" id="form3Example4cg" class="form-control form-control-lg" />
                 <label class="form-label" for="form3Example4cg">Password</label>
             </div>
             <div data-mdb-input-init class="form-outline mb-4">
-                <input type="password" id="form3Example4cdg" class="form-control form-control-lg" />
+                <input type="password" name="confirmation" id="form3Example4cdg" class="form-control form-control-lg" />
                 <label class="form-label" for="form3Example4cdg">Repeat your password</label>
             </div>
             <div data-mdb-input-init class="form-outline mb-4 ">
-                <input type="text" id="form3Example1cg" class="form-control form-control-lg" />
+                <input type="text" name="age" id="form3Example1cg" class="form-control form-control-lg" />
                 <label class="form-label" for="form3Example1cg">Age</label>
             </div>
             <div data-mdb-input-init class="form-outline mb-4 ">
-                <textarea class="form-control" id="floatingTextarea"></textarea>
+                <textarea class="form-control" id="floatingTextarea" name="bio" ></textarea>
                 <label for="floatingTextarea">Bio</label>
             </div>
             <div class="d-flex justify-content-center">
-                <button  type="button" data-mdb-button-init
+                <button  type="submit" data-mdb-button-init
                 data-mdb-ripple-init class="btn btn-primary btn-block btn-lg gradient-custom-4 text-white">Register</button>
             </div>
 
