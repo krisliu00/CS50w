@@ -6,9 +6,9 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{% block title %}Social Network{% endblock %}</title>
-
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
         <link href="{% static 'network/css/styles.css' %}" rel="stylesheet">
+        <script src="static/network/js/index.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
     </head>
         <body>
@@ -23,7 +23,6 @@
             <symbol id="speedometer2" viewBox="0 0 16 16">
                 <path d="M3 2.5A1.5 1.5 0 0 1 4.5 1h1A1.5 1.5 0 0 1 7 2.5V5h2V2.5A1.5 1.5 0 0 1 10.5 1h1A1.5 1.5 0 0 1 13 2.5v2.382a.5.5 0 0 0 .276.447l.895.447A1.5 1.5 0 0 1 15 7.118V14.5a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 14.5v-3a.5.5 0 0 1 .146-.354l.854-.853V9.5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v.793l.854.853A.5.5 0 0 1 7 11.5v3A1.5 1.5 0 0 1 5.5 16h-3A1.5 1.5 0 0 1 1 14.5V7.118a1.5 1.5 0 0 1 .83-1.342l.894-.447A.5.5 0 0 0 3 4.882zM4.5 2a.5.5 0 0 0-.5.5V3h2v-.5a.5.5 0 0 0-.5-.5zM6 4H4v.882a1.5 1.5 0 0 1-.83 1.342l-.894.447A.5.5 0 0 0 2 7.118V13h4v-1.293l-.854-.853A.5.5 0 0 1 5 10.5v-1A1.5 1.5 0 0 1 6.5 8h3A1.5 1.5 0 0 1 11 9.5v1a.5.5 0 0 1-.146.354l-.854.853V13h4V7.118a.5.5 0 0 0-.276-.447l-.895-.447A1.5 1.5 0 0 1 12 4.882V4h-2v1.5a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5zm4-1h2v-.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5zm4 11h-4v.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5zm-8 0H2v.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5z"/>
             </symbol>            
-            
             <symbol id="table" viewBox="0 0 16 16">
                 <path d="M5.5 2A3.5 3.5 0 0 0 2 5.5v5A3.5 3.5 0 0 0 5.5 14h5a3.5 3.5 0 0 0 3.5-3.5V8a.5.5 0 0 1 1 0v2.5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 1 10.5v-5A4.5 4.5 0 0 1 5.5 1H8a.5.5 0 0 1 0 1z"/>
                 <path d="M16 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
@@ -81,11 +80,13 @@
             {% endif %}
             {% if user.is_authenticated %}
             <li class="pt-2">
-                <a href="#" class="nav-link text-white fs-5">
-                <svg class="bi pe-none me-2" width="20" height="20"><use xlink:href="#table"/></svg>
+                <a href="#" class="nav-link text-white fs-5 ">
+                <svg class="bi pe-none me-2" width="20" height="20"><use xlink:href="#table"/>
+                </svg>
                 &nbsp
-                Notifications
-                <span class="badge text-bg-primary position-absolute translate-middle ">4</span>
+                <span class="position-relative">Notifications</span>
+                <span class="position-absolute translate-middle p-2 bg-danger rounded-circle scaled-badge">
+                </span>
                 </a>
             </li>
             <li class="pt-2">
@@ -103,6 +104,9 @@
                 </a>
             </li>
             </ul>
+            <a class="btn btn-primary rounded-5 w-100 fs-4 mb-3" data-bs-toggle="collapse" href="#compose_post" role="button" aria-expanded="false" aria-controls="compose_post">
+                Post
+            </a>
             <hr>
             <div class="dropdown ">
             <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -139,6 +143,7 @@
                   <li class="page-item">
                     <a class="page-link bg-dark border-0 text-white" href="#">Next</a>
                   </li>
+                  <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#compose_post" aria-expanded="false" aria-controls="compose_post">Post</button>
                 </ul>
               </nav>
             </div>

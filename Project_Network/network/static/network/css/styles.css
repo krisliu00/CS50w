@@ -115,3 +115,27 @@ body {
     height: 20%;
   }
 
+
+  .scaled-badge {
+    transform: scale(0.6) !important;
+    transform-origin: center center !important; 
+}
+
+.image-container {
+  position: relative !important;
+  display: inline-block !important;
+  margin: 5px !important;
+  width: 25% !important;
+  height: 25% !important;
+}
+
+.delete-btn {
+  position: absolute !important; 
+  right: 25px !important; 
+  cursor: pointer !important;
+  background-color: black !important;
+  transform: scale(0.7) !important;
+  color: beige !important;
+  padding: 4px 12px !important;
+  border-radius: 50% !important;
+}
