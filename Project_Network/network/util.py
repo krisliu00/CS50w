@@ -4,10 +4,15 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 import os
+from datetime import datetime, timedelta
+from django.utils.timezone import make_aware
 
 
 def save_images(images, user, post):
     saved_image_paths = []
+
+    if not images:
+        return None
 
     for image in images:
         img = Image.open(image)
@@ -25,3 +30,23 @@ def save_images(images, user, post):
         saved_image_paths.append(saved_path)
 
     return saved_image_paths
+
+def post_images(username, post):
+    id = post.id
+
+    img_folder_path = f"{settings.MEDIA_ROOT}/Post_Image/{username}/{id}/"
+
+    if not os.path.exists(img_folder_path):
+        return None
+
+    return img_folder_path
+
+def time_setting(createtime):
+    now = make_aware(datetime.now())
+    time_diff = now - createtime
+    
+    if time_diff < timedelta(hours=24):
+        hours_ago = int(time_diff.total_seconds() // 3600)
+        return f"{hours_ago}h"
+    else:
+        return createtime.strftime("%m/%d")
