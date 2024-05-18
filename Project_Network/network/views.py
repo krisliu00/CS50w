@@ -1,60 +1,55 @@
+import os
 from django.contrib.auth import authenticate, login, logout
-from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from .models import Posts
+from .util import save_images, post_images, time_setting
+from core.models import CustomUser
 
 def index(request):
-    return render(request, "network/index.html")
+    if request.method == "POST":
+        text = request.POST.get("text")
+        images = request.FILES.getlist("image")
+        user = request.user
+        post = Posts.objects.create(user=user, text=text)
+        post.save()
+        if images:
+            save_images(images, user, post)
+
+        return HttpResponseRedirect(reverse("network:index"))
+    else:
+        pass
+
+    posts = Posts.objects.all()
+    posts_data = []
+    for post in posts:
+        user_instance = CustomUser.objects.get(id=post.user_id)
+        username = user_instance.username
+        customname = user_instance.custom_name
+        createtime = post.create_time
+        time = time_setting(createtime)
+        likes = post.likes
 
 
-# def login_view(request):
-#     if request.method == "POST":
+        images_path = post_images(username, post)
+        images_filenames = [] 
+        if images_path is not None:
 
-#         # Attempt to sign user in
-#         username = request.POST["username"]
-#         password = request.POST["password"]
-#         user = authenticate(request, username=username, password=password)
+            images_filenames = os.listdir(images_path)
 
-#         # Check if authentication successful
-#         if user is not None:
-#             login(request, user)
-#             return HttpResponseRedirect(reverse("index"))
-#         else:
-#             return render(request, "network/login.html", {
-#                 "message": "Invalid username and/or password."
-#             })
-#     else:
-#         return render(request, "network/login.html")
+        posts_data.append({
+            'post': post,
+            'imagepath': images_path,
+            'username': username,
+            'customname': customname,
+            'image_filenames': images_filenames,
+            'time': time
+        })
+
+    return render(request, "network/index.html", {'posts_data': posts_data})
 
 
-# def logout_view(request):
-#     logout(request)
-#     return HttpResponseRedirect(reverse("index"))
 
 
-# def register(request):
-#     if request.method == "POST":
-#         username = request.POST["username"]
-#         email = request.POST["email"]
-
-#         # Ensure password matches confirmation
-#         password = request.POST["password"]
-#         confirmation = request.POST["confirmation"]
-#         if password != confirmation:
-#             return render(request, "network/register.html", {
-#                 "message": "Passwords must match."
-#             })
-
-#         # Attempt to create new user
-#         try:
-#             user = User.objects.create_user(username, email, password)
-#             user.save()
-#         except IntegrityError:
-#             return render(request, "network/register.html", {
-#                 "message": "Username already taken."
-#             })
-#         login(request, user)
-#         return HttpResponseRedirect(reverse("index"))
-#     else:
-#         return render(request, "network/register.html")

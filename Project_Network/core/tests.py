@@ -1,41 +1,37 @@
-from django.test import TestCase
-from django.contrib.auth.models import User
-from .models import CustomUser
+from django.test import TestCase, Client
+from django.urls import reverse
+from django.contrib.auth import get_user_model
 
-class UserRegistrationTest(TestCase):
-    def test_successful_registration(self):
-        # Test successful user registration
-        response = self.client.post('/register', {
-            'username': 'testuser',
+class UserRegistrationTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_user_can_register(self):
+        # Prepare registration form data
+        data = {
             'email': 'test@example.com',
-            'password1': 'test1234',
-            'password2': 'test1234',
-            'custom name': 'Test User'  # Adjust field name if necessary
-        })
-        self.assertEqual(response.status_code, 302)  
-        self.assertTrue(CustomUser.objects.filter(username='testuser').exists()) 
-
-    def test_password_mismatch(self):
-        # Test registration with password mismatch
-        response = self.client.post('/register', {
             'username': 'testuser',
-            'email': 'test@example.com',
-            'password1': 'test1234',
-            'password2': 'test12345',  
-            'custom name': 'Test User'  # Adjust field name if necessary
-        })
-        self.assertEqual(response.status_code, 200)  
-        self.assertFalse(CustomUser.objects.filter(username='testuser').exists()) 
+            'customname': 'Test User',
+            'bio': 'This is a test bio.',
+            'age': 25,
+            'password': 'password123',
+            'confirmation': 'password123',
+        }
 
-    def test_missing_custom_name(self):
-        # Test registration with missing custom name (required field)
-        response = self.client.post('/register', {
-            'username': 'testuser',
-            'email': 'test@example.com',
-            'password1': 'test1234',
-            'password2': 'test1234',
-            # 'custom_name': 'Test User'
-        })
-        self.assertEqual(response.status_code, 200)  
-        self.assertFalse(CustomUser.objects.filter(username='testuser').exists())  
+        # Simulate user registration
+        response = self.client.post(reverse('core:register'), data)
 
+        # Check if the response is a redirect
+        self.assertEqual(response.status_code, 302)
+
+        # Verify that the user is created
+        user = get_user_model().objects.filter(username=data['username']).first()
+        self.assertTrue(user is not None)
+        self.assertTrue(user.check_password(data['password']))
+        self.assertEqual(user.email, data['email'])
+        self.assertEqual(user.custom_name, data['customname'])
+        self.assertEqual(user.bio, data['bio'])
+        self.assertEqual(user.age, data['age'])
+
+        # Ensure no duplicate username is created
+        self.assertRaises(ValueError, get_user_model().objects.create_user, **data)

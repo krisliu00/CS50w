@@ -28,8 +28,8 @@ user_permissions = models.ManyToManyField(
 class UserProfile(models.Model):
     
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    following = models.ManyToManyField('self', symmetrical=False, related_name='followings')
-    follower = models.ManyToManyField('self', symmetrical=False, related_name='followers')
+    following = models.ManyToManyField('self', symmetrical=False, related_name='followings',)
+    follower = models.ManyToManyField('self', symmetrical=False, related_name='followers', )
 
     def __str__(self):
         return self.user.username

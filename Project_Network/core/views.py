@@ -4,8 +4,11 @@ from django.http import HttpResponseRedirect
 from django.db import IntegrityError
 from django.shortcuts import render
 from django.urls import reverse
-from .models import CustomUser
+from .models import CustomUser, UserProfile
+from network.models import Posts
 from django.contrib.auth import authenticate
+from network.util import save_profile_photo
+from django.db.models import Count
 
 
 # Create your views here.
@@ -56,3 +59,45 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("network:index"))
+
+def UserProfile_view(request, username):
+
+    current_user = request.user
+    profile_user = CustomUser.objects.get(username=username)
+    profile_user_instances = Posts.objects.filter(user_id=profile_user.id)
+
+    try:
+        user_profile = UserProfile.objects.get(user_id=profile_user.id)
+
+    except UserProfile.DoesNotExist:
+        following_count = 0
+        follower_count = 0
+
+    else:
+        following_count = user_profile.following.count()
+        follower_count = user_profile.follower.count()
+        
+        
+    return render(request, "core/userprofile.html", {
+        'current_user': current_user,
+        'profile_user': profile_user,
+        'profile_user_instances': profile_user_instances,
+        'following_count': following_count,
+        'follower_count': follower_count
+    })
+
+def setting_profile_view(request):
+
+    if request.method == "POST":
+        image = request.FILES.getlist("profile_photo")
+        user = request.user
+        if image:
+            save_profile_photo(image, user)
+        
+        return render(request, "core/userprofile.html")
+    
+    else:
+        return render(request, "core/setting_profile.html")
+
+
+
