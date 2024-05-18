@@ -5,7 +5,11 @@
 <div id="userprofile_container">
     <h1>{{ profile_user.custom_name}} @ {{ profile_user.username }}</h1>
         {{ follower_count }} Followers  {{ following_count }} Following
-
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Edit Profile
+    </button>  
+    
 <div class="mt-5 d-flex justify-content-center"> 
 <span class="border-bottom border-light border-opacity-10 w-50 text-center">Posts</span>
 <span class="border-bottom border-light border-opacity-10 w-50 text-center">likes</span>
@@ -17,7 +21,43 @@
     {% endfor %}
     </p>
 </div>
-    
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="width: 80%; height: 80%;">
+        <div class="modal-content bg-black" style="height: 70%;">
+        <div class="modal-header ">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Profile</h1>
+            <button type="button" class="btn-close btn-close-white" aria-label="Close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+            <label for="inputGroupFile01" class="rounded-circle border border-gray p-2" style="width: 100px; height: 100px; cursor: pointer;">
+                <input type="file" class="form-control" id="inputGroupFile01" name="image" style="display: none;" multiple accept=".jpg,.jpeg,.png">
+            </label>
+            <div class="container-fluid d-flex flex-column mb-3 ms-5 align-items-center">
+                <form class="form-floating w-75 mt-2">
+                    <input type="text" class="form-control bg-dark border-0 text-white" id="floatingInputValue1" placeholder="" value="">
+                    <label for="floatingInputValue1">Custom Name</label>
+                </form>
+                <form class="form-floating w-75 mt-2">
+                    <input type="text" class="form-control bg-dark border-0 text-white" id="floatingInputValue2" placeholder="" value="">
+                    <label for="floatingInputValue2">Age</label>
+                </form>
+                <form class="form-floating w-75 mt-2">
+                    <input type="email" class="form-control bg-dark border-0 text-white" id="floatingInputValue3" placeholder="" value="">
+                    <label for="floatingInputValue3">Email</label>
+                </form>
+                <form class="form-floating w-75 mt-2">
+                    <textarea class="form-control bg-dark border-0 text-white" style="height: 100px" placeholder="Bio" id="floatingTextarea"></textarea>
+                    <label for="floatingTextarea">Bio</label>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary">Save</button>
+        </div>
+        </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

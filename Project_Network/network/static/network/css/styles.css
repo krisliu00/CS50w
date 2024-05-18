@@ -139,3 +139,14 @@ body {
   padding: 4px 12px !important;
   border-radius: 50% !important;
 }
+.modal .modal-body {
+  height: 90%;
+}
+
+/* The div inside modal-body is the key; there's where we put the content (which may need the vertical scrollbar) */
+.modal .modal-body div {
+  height: 100%;
+  overflow-y: auto;
+  width: 100%;
+}
+

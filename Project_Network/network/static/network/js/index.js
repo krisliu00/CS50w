@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const textarea = document.getElementById('floatingTextarea');
     const submitButton = document.getElementById('postSubmit');
     const fileInput = document.getElementById('inputGroupFile01');
-    
+
+
 
 
     textarea.addEventListener('input', function() {
@@ -62,5 +63,6 @@ document.addEventListener('DOMContentLoaded', function() {
             handleFile(files[i]);
         }
     }   
+
 
 });
