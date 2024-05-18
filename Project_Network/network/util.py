@@ -50,3 +50,20 @@ def time_setting(createtime):
         return f"{hours_ago}h"
     else:
         return createtime.strftime("%m/%d")
+
+def save_profile_photo(image, user):
+    if not image:
+        return None
+    else:
+        img = Image.open(image)
+        target_width = 300
+        target_height = 300
+        img.thumbnail((target_width, target_height), Image.LANCZOS)
+        img_bytes = BytesIO()
+        img.save(img_bytes, format='PNG') 
+        img_file = ContentFile(img_bytes.getvalue())
+        upload_path = os.path.join(settings.MEDIA_ROOT, 'Profile_Photo', user.username, img.name)
+
+        saved_path = default_storage.save(upload_path, img_file)
+
+    return saved_path

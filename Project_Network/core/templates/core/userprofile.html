@@ -1,0 +1,23 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+<div id="userprofile_container">
+    <h1>{{ profile_user.custom_name}} @ {{ profile_user.username }}</h1>
+        {{ follower_count }} Followers  {{ following_count }} Following
+
+<div class="mt-5 d-flex justify-content-center"> 
+<span class="border-bottom border-light border-opacity-10 w-50 text-center">Posts</span>
+<span class="border-bottom border-light border-opacity-10 w-50 text-center">likes</span>
+</div>
+<div id="post_content">
+    <p>
+    {% for obj in profile_user_instances %}
+        {{ obj.text }}
+    {% endfor %}
+    </p>
+</div>
+    
+</div>
+
+{% endblock %}
