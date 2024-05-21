@@ -24,7 +24,7 @@
 <div id="allPosts">
    {% for post_data in posts_data %}
    <div id="post_container" class="border border-light border-end border-start border-opacity-10 pt-2">
-        <p class="ms-1">{{ post_data.customname }} @ {{ post_data.username }} · {{ post_data.time }}</p>
+        <p class="ms-1">{{ post_data.customname }}</p><p id="username">@ {{ post_data.username }} · {{ post_data.time }}</p>
         <p class="ms-1">{{ post_data.post.text }}</p>
        {% if post_data.image_filenames %}
        {% for image in post_data.image_filenames %}

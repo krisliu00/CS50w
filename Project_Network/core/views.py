@@ -9,6 +9,9 @@ from network.models import Posts
 from django.contrib.auth import authenticate
 from network.util import save_profile_photo
 from django.db.models import Count
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
 # Create your views here.
@@ -86,18 +89,22 @@ def UserProfile_view(request, username):
         'follower_count': follower_count
     })
 
-def setting_profile_view(request):
+@login_required
+def userProfilePhoto_api(request):
 
-    if request.method == "POST":
-        image = request.FILES.getlist("profile_photo")
+    if request.method == 'POST':
+
+        image = request.FILES.get("image")
         user = request.user
-        if image:
-            save_profile_photo(image, user)
-        
-        return render(request, "core/userprofile.html")
-    
+        print(user)
     else:
-        return render(request, "core/setting_profile.html")
+        if not image:
+            return JsonResponse({'success': False, 'message': 'No image uploaded'})
+
+    save_profile_photo(image, user)
+
+    return JsonResponse({'success': True, 'message': 'Image uploaded successfully'})
+        
 
 
 

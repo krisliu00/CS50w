@@ -62,7 +62,7 @@ def save_profile_photo(image, user):
         img_bytes = BytesIO()
         img.save(img_bytes, format='PNG') 
         img_file = ContentFile(img_bytes.getvalue())
-        upload_path = os.path.join(settings.MEDIA_ROOT, 'Profile_Photo', user.username, img.name)
+        upload_path = os.path.join(settings.MEDIA_ROOT, 'Profile_Photo', user.username, 'head.png')
 
         saved_path = default_storage.save(upload_path, img_file)
 

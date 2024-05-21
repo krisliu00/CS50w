@@ -10,5 +10,6 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("<str:username>", views.UserProfile_view, name="userprofile"),
+    path("upload", views.userProfilePhoto_api, name="uploadphoto"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
