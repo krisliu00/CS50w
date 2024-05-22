@@ -9,7 +9,7 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
-    path("<str:username>", views.UserProfile_view, name="userprofile"),
     path("upload", views.userProfilePhoto_api, name="uploadphoto"),
+    path("<str:username>", views.UserProfile_view, name="userprofile"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

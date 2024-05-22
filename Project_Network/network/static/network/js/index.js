@@ -2,10 +2,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const textarea = document.getElementById('floatingTextarea');
     const submitButton = document.getElementById('postSubmit');
     const fileInput = document.getElementById('inputGroupFile01');
-    profilePhotoUpload();
+    const modal = document.getElementById('exampleModal');
+    const usernameElement = document.getElementById('username');
 
+    if (modal) {
 
-
+        modal.addEventListener('shown.bs.modal', function() {
+            const username = usernameElement.textContent || usernameElement.value;
+            const timestamp = new Date().getTime();
+            const imagePath = `/media/Profile_Photo/${username}/head.png?${timestamp}`;
+            profilePhoto.src = imagePath;
+            profilePhoto.style.display = 'block';
+            profilePhotoUpload();
+        });
 
     textarea.addEventListener('input', function() {
         if (textarea.value.trim().length > 0) {
@@ -84,25 +93,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function profilePhotoUpload() {
         const saveProfileButton = document.getElementById('save_profile');
         const modalCloseButton = document.getElementById('modalclosebutton');
-        const usernameElement = document.getElementById('username');
         const profilePhoto = document.getElementById('userphoto_container');
-        const modal = document.getElementById('exampleModal');
         const photoUploadInput = document.getElementById('photoUpload');
+        const formElements = document.querySelectorAll('#userprofile_container .form-control');
+        formElements.forEach(element => {
+            element.addEventListener('input', checkFormValues);
+        });
+        let formHasValue = false;
 
         let tempImageURL = null;
 
-        if (modal && saveProfileButton) {
-
-            modal.addEventListener('shown.bs.modal', function() {
-                const username = usernameElement.textContent || usernameElement.value;
-                const timestamp = new Date().getTime();
-                const imagePath = `/media/Profile_Photo/${username}/head.png?${timestamp}`;
-                profilePhoto.src = imagePath;
-                profilePhoto.style.display = 'block';
-            });
-
         if (photoUploadInput) {
             photoUploadInput.addEventListener('change', function(event) {
+                event.preventDefault();
                 if (event.target.files && event.target.files.length > 0) {
                     const selectedFile = event.target.files[0];
                     const reader = new FileReader();
@@ -118,7 +121,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     
         if (saveProfileButton) {
-            saveProfileButton.addEventListener('click', function() {
+            saveProfileButton.addEventListener('click', function(event) {
+                event.preventDefault();
                 if (tempImageURL) {
 
                     fetch(tempImageURL)
@@ -127,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             const formData = new FormData();
                             formData.append('image', blob);
                 
-                            fetch('/upload', {
+                            fetch('upload', {
                                 credentials: "same-origin",
                                 headers: {
                                     'X-CSRFToken': getCookie('csrftoken') 
@@ -139,6 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             .then(data => {
                                 if (data.success) {
                                     profilePhoto.src = tempImageURL;
+                                    document.getElementById('modalclosebutton').click();
                                 } else {
                                     alert('Image upload failed!');
                                 }
@@ -152,6 +157,32 @@ document.addEventListener('DOMContentLoaded', function() {
                             console.error('Error:', error);
                             alert('An error occurred while fetching the image.');
                         });
+                }
+                formElements.forEach(element => {
+                    if (element.value.trim() !== '') {
+                        formHasValue = true;
+                    }
+                });
+
+                if (formHasValue) {
+
+                    fetch('upload', {
+                        credentials: "same-origin",
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken') 
+                        },
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('modalclosebutton').click();
+                        } else {
+                            alert('profile update failed!');
+                        }
+                    })
+
                 }
             });
         }
