@@ -17,7 +17,12 @@
         Edit Profile
     </button>  
     {% endif %}
-    
+    {% if not current_user.username == profile_user.username %}
+    <button type="button" class="btn btn-primary" data-hidden-value="{{ profile_user.username }}" id="follow">
+        Follow
+    </button>  
+    {% endif %}
+
 <div class="mt-5 d-flex justify-content-center"> 
 <span class="border-bottom border-light border-opacity-10 w-50 text-center">Posts</span>
 <span class="border-bottom border-light border-opacity-10 w-50 text-center">likes</span>

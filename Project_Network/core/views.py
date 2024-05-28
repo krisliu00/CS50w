@@ -8,10 +8,9 @@ from .models import CustomUser, UserProfile
 from network.models import Posts
 from django.contrib.auth import authenticate
 from network.util import save_profile_photo
-from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+
 
 
 # Create your views here.
@@ -96,7 +95,6 @@ def userProfilePhoto_api(request):
 
         image = request.FILES.get("image")
         user = request.user
-        print(user)
     else:
         if not image:
             return JsonResponse({'success': False, 'message': 'No image uploaded'})
@@ -105,6 +103,47 @@ def userProfilePhoto_api(request):
 
     return JsonResponse({'success': True, 'message': 'Image uploaded successfully'})
         
+
+
+@login_required
+def userFollow_api(request):
+    profile_username = request.GET.get('profile_username') if request.method == 'GET' else request.data.get('profile_username')
+    try:
+            profile_user = CustomUser.objects.get(username=profile_username)
+            profile_user_profile = UserProfile.objects.get(user_id=profile_user.id)
+            current_user_profile = UserProfile.objects.get(user_id=request.user.id)
+
+    except UserProfile.DoesNotExist:
+        return JsonResponse({"detail": "Profile user not found."}, status=404)
+
+    if request.method == 'GET':
+        is_following = profile_user_profile in current_user_profile.following.all()
+        return JsonResponse({"is_following": is_following}, status=200)
+    
+    elif request.method == 'PUT':
+        if profile_user_profile not in current_user_profile.following.all():
+            current_user_profile.following.add(profile_user_profile)
+            profile_user_profile.follower.add(current_user_profile)
+            message = f"You are now following {profile_username}"
+        else:
+            current_user_profile.following.remove(profile_user_profile)
+            profile_user_profile.follower.remove(current_user_profile)
+            message = f"Unfollowed {profile_username}"
+
+        current_user_profile.save()
+        profile_user_profile.save()
+        return JsonResponse({"detail": message}, status=200)
+
+    return JsonResponse({"detail": "Invalid request method."}, status=405)
+    
+
+
+
+       
+
+
+
+
 
 
 

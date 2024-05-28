@@ -4,6 +4,56 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('inputGroupFile01');
     const modal = document.getElementById('exampleModal');
     const usernameElement = document.getElementById('username');
+    const profilePhoto = document.getElementById('userphoto_container');
+    const followButton = document.getElementById('follow');
+
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    if (followButton) {
+        const profileUsername = followButton.getAttribute('data-hidden-value');
+        fetch('/follow/?profile_username=${profileUsername}', {
+            method: 'GET',
+            credentials: "same-origin",
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            followButton.textContent = data.is_following ? 'Unfollow' : 'Follow';
+        })
+        .catch(error => console.error('Error:', error));
+
+        followButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            fetch('follow', {
+                method: 'PUT',
+                credentials: "same-origin",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ profile_username: profileUsername })
+            })
+            .then(response => response.json())
+            .catch(error => console.error('Error:', error));
+        });
+    }
 
     if (modal) {
 
@@ -73,27 +123,11 @@ document.addEventListener('DOMContentLoaded', function() {
             handleFile(files[i]);
         }
     }   
-
-    function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
     
     function profilePhotoUpload() {
         const saveProfileButton = document.getElementById('save_profile');
         const modalCloseButton = document.getElementById('modalclosebutton');
-        const profilePhoto = document.getElementById('userphoto_container');
+        
         const photoUploadInput = document.getElementById('photoUpload');
         const formElements = document.querySelectorAll('#userprofile_container .form-control');
         formElements.forEach(element => {
