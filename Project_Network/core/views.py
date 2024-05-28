@@ -36,7 +36,9 @@ def register(request):
             return render(request, "core/register.html", {
                 "message": "Username or email address already taken."
             })
-        login(request, user)
+        
+        backend = 'core.backends.EmailBackend'
+        login(request, user, backend=backend)
         return HttpResponseRedirect(reverse("network:index"))
     else:
         return render(request, "core/register.html")
@@ -74,18 +76,25 @@ def UserProfile_view(request, username):
     except UserProfile.DoesNotExist:
         following_count = 0
         follower_count = 0
+        is_following = False
 
     else:
         following_count = user_profile.following.count()
         follower_count = user_profile.follower.count()
-        
+    
+    if request.user.is_authenticated:
+            current_user_profile = UserProfile.objects.get(user_id=current_user.id)
+            is_following = current_user_profile.following.filter(id=user_profile.id).exists()
+    else:
+        is_following = False
         
     return render(request, "core/userprofile.html", {
         'current_user': current_user,
         'profile_user': profile_user,
         'profile_user_instances': profile_user_instances,
         'following_count': following_count,
-        'follower_count': follower_count
+        'follower_count': follower_count,
+        'is_following': is_following
     })
 
 @login_required
@@ -110,8 +119,8 @@ def userFollow_api(request):
     profile_username = request.GET.get('profile_username') if request.method == 'GET' else request.data.get('profile_username')
     try:
             profile_user = CustomUser.objects.get(username=profile_username)
-            profile_user_profile = UserProfile.objects.get(user_id=profile_user.id)
-            current_user_profile = UserProfile.objects.get(user_id=request.user.id)
+            profile_user_profile = UserProfile.objects.get(user=profile_user)
+            current_user_profile = UserProfile.objects.get(user=request.user)
 
     except UserProfile.DoesNotExist:
         return JsonResponse({"detail": "Profile user not found."}, status=404)

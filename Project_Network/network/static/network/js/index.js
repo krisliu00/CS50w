@@ -25,19 +25,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (followButton) {
         const profileUsername = followButton.getAttribute('data-hidden-value');
-        fetch('/follow/?profile_username=${profileUsername}', {
-            method: 'GET',
-            credentials: "same-origin",
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            followButton.textContent = data.is_following ? 'Unfollow' : 'Follow';
-        })
-        .catch(error => console.error('Error:', error));
 
         followButton.addEventListener('click', function(event) {
             event.preventDefault();

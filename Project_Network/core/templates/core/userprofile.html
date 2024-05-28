@@ -19,7 +19,11 @@
     {% endif %}
     {% if not current_user.username == profile_user.username %}
     <button type="button" class="btn btn-primary" data-hidden-value="{{ profile_user.username }}" id="follow">
+    {% if is_following %}
         Follow
+    {% else %}
+        Unfollow
+    {% endif %}
     </button>  
     {% endif %}
 
