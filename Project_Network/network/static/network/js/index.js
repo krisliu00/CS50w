@@ -37,7 +37,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify({ profile_username: profileUsername })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.detail) {
+                    alert(data.detail);
+                    followButton.textContent = followButton.textContent.trim() === "Follow" ? "Unfollow" : "Follow";
+                } else {
+                    console.error('Unexpected response:', data);
+                }
+            })
             .catch(error => console.error('Error:', error));
         });
     }
@@ -62,6 +75,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 
+    
+    if (fileInput) {
     fileInput.addEventListener('change', previewImages);
 
     function previewImages(event) {
@@ -105,11 +120,11 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.readAsDataURL(file);
         }
     
-       
         for (var i = 0; i < files.length; i++) {
             handleFile(files[i]);
         }
     }   
+    }
     
     function profilePhotoUpload() {
         const saveProfileButton = document.getElementById('save_profile');

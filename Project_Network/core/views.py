@@ -10,6 +10,8 @@ from django.contrib.auth import authenticate
 from network.util import save_profile_photo
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+import json
 
 
 
@@ -116,34 +118,34 @@ def userProfilePhoto_api(request):
 
 @login_required
 def userFollow_api(request):
-    profile_username = request.GET.get('profile_username') if request.method == 'GET' else request.data.get('profile_username')
+    if request.method != 'PUT':
+        return JsonResponse({"detail": "Invalid request method."}, status=405)
+
     try:
-            profile_user = CustomUser.objects.get(username=profile_username)
-            profile_user_profile = UserProfile.objects.get(user=profile_user)
-            current_user_profile = UserProfile.objects.get(user=request.user)
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"detail": "Invalid JSON."}, status=400)
 
-    except UserProfile.DoesNotExist:
-        return JsonResponse({"detail": "Profile user not found."}, status=404)
+    profile_username = data.get('profile_username')
+    if not profile_username:
+        return JsonResponse({"detail": "Profile username is required."}, status=400)
 
-    if request.method == 'GET':
-        is_following = profile_user_profile in current_user_profile.following.all()
-        return JsonResponse({"is_following": is_following}, status=200)
-    
-    elif request.method == 'PUT':
-        if profile_user_profile not in current_user_profile.following.all():
-            current_user_profile.following.add(profile_user_profile)
-            profile_user_profile.follower.add(current_user_profile)
-            message = f"You are now following {profile_username}"
-        else:
-            current_user_profile.following.remove(profile_user_profile)
-            profile_user_profile.follower.remove(current_user_profile)
-            message = f"Unfollowed {profile_username}"
+    profile_user = get_object_or_404(CustomUser, username=profile_username)
+    profile_user_profile = get_object_or_404(UserProfile, user=profile_user)
+    current_user_profile = get_object_or_404(UserProfile, user=request.user)
 
-        current_user_profile.save()
-        profile_user_profile.save()
-        return JsonResponse({"detail": message}, status=200)
+    if profile_user_profile in current_user_profile.following.all():
+        current_user_profile.following.remove(profile_user_profile)
+        profile_user_profile.follower.remove(current_user_profile)
+        message = f"Unfollowed {profile_username}"
+    else:
+        current_user_profile.following.add(profile_user_profile)
+        profile_user_profile.follower.add(current_user_profile)
+        message = f"You are now following {profile_username}"
 
-    return JsonResponse({"detail": "Invalid request method."}, status=405)
+    current_user_profile.save()
+    profile_user_profile.save()
+    return JsonResponse({"detail": message}, status=200)
     
 
 
