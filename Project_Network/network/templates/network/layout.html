@@ -67,13 +67,6 @@
                 Home
                 </a>
             </li>
-            <li class="pt-2">
-                <a href="#" class="nav-link text-white fs-5">
-                <svg class="bi pe-none me-2" width="20" height="20"><use xlink:href="#Explore"/></svg>
-                &nbsp
-                Explore
-                </a>
-            </li>
             {% if not user.is_authenticated %}
             <li class="pt-2">
                 <a href="{% url 'core:login' %}" class="nav-link text-white fs-5">
@@ -91,6 +84,13 @@
             </li>
             {% endif %}
             {% if user.is_authenticated %}
+            <li class="pt-2">
+                <a href="#" class="nav-link text-white fs-5">
+                <svg class="bi pe-none me-2" width="20" height="20"><use xlink:href="#Explore"/></svg>
+                &nbsp
+                Following
+                </a>
+            </li>
             <li class="pt-2">
                 <a href="#" class="nav-link text-white fs-5 ">
                 <svg class="bi pe-none me-2" width="20" height="20"><use xlink:href="#Notifications"/>
