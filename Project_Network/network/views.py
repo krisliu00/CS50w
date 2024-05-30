@@ -32,6 +32,9 @@ def index(request):
         time = time_setting(createtime)
         likes = post.likes
 
+        if likes is None:
+            likes = 0
+
 
         images_path = post_images(username, post)
         images_filenames = [] 
@@ -45,7 +48,8 @@ def index(request):
             'username': username,
             'customname': customname,
             'image_filenames': images_filenames,
-            'time': time
+            'time': time,
+            'likes': likes
         })
 
     return render(request, "network/index.html", {'posts_data': posts_data})

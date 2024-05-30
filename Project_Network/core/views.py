@@ -8,7 +8,11 @@ from .models import CustomUser, UserProfile
 from network.models import Posts
 from django.contrib.auth import authenticate
 from network.util import save_profile_photo
-from django.db.models import Count
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+import json
+
 
 
 # Create your views here.
@@ -34,7 +38,9 @@ def register(request):
             return render(request, "core/register.html", {
                 "message": "Username or email address already taken."
             })
-        login(request, user)
+        
+        backend = 'core.backends.EmailBackend'
+        login(request, user, backend=backend)
         return HttpResponseRedirect(reverse("network:index"))
     else:
         return render(request, "core/register.html")
@@ -72,32 +78,83 @@ def UserProfile_view(request, username):
     except UserProfile.DoesNotExist:
         following_count = 0
         follower_count = 0
+        is_following = False
 
     else:
         following_count = user_profile.following.count()
         follower_count = user_profile.follower.count()
-        
+    
+    if request.user.is_authenticated:
+            current_user_profile = UserProfile.objects.get(user_id=current_user.id)
+            is_following = current_user_profile.following.filter(id=user_profile.id).exists()
+    else:
+        is_following = False
         
     return render(request, "core/userprofile.html", {
         'current_user': current_user,
         'profile_user': profile_user,
         'profile_user_instances': profile_user_instances,
         'following_count': following_count,
-        'follower_count': follower_count
+        'follower_count': follower_count,
+        'is_following': is_following
     })
 
-def setting_profile_view(request):
+@login_required
+def userProfilePhoto_api(request):
 
-    if request.method == "POST":
-        image = request.FILES.getlist("profile_photo")
+    if request.method == 'POST':
+
+        image = request.FILES.get("image")
         user = request.user
-        if image:
-            save_profile_photo(image, user)
-        
-        return render(request, "core/userprofile.html")
-    
     else:
-        return render(request, "core/setting_profile.html")
+        if not image:
+            return JsonResponse({'success': False, 'message': 'No image uploaded'})
+
+    save_profile_photo(image, user)
+
+    return JsonResponse({'success': True, 'message': 'Image uploaded successfully'})
+        
+
+
+@login_required
+def userFollow_api(request):
+    if request.method != 'PUT':
+        return JsonResponse({"detail": "Invalid request method."}, status=405)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"detail": "Invalid JSON."}, status=400)
+
+    profile_username = data.get('profile_username')
+    if not profile_username:
+        return JsonResponse({"detail": "Profile username is required."}, status=400)
+
+    profile_user = get_object_or_404(CustomUser, username=profile_username)
+    profile_user_profile = get_object_or_404(UserProfile, user=profile_user)
+    current_user_profile = get_object_or_404(UserProfile, user=request.user)
+
+    if profile_user_profile in current_user_profile.following.all():
+        current_user_profile.following.remove(profile_user_profile)
+        profile_user_profile.follower.remove(current_user_profile)
+        message = f"Unfollowed {profile_username}"
+    else:
+        current_user_profile.following.add(profile_user_profile)
+        profile_user_profile.follower.add(current_user_profile)
+        message = f"You are now following {profile_username}"
+
+    current_user_profile.save()
+    profile_user_profile.save()
+    return JsonResponse({"detail": message}, status=200)
+    
+
+
+
+       
+
+
+
+
 
 
 
