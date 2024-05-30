@@ -61,7 +61,7 @@
             <hr>
             <ul class="nav nav-pills flex-column mb-auto py-1 pe-1">
             <li class="nav-item pt-2">
-                <a href="#" class="nav-link active fs-5" aria-current="page">
+                <a href="{% url 'network:index' %}" class="nav-link active fs-5" aria-current="page">
                 <svg class="bi pe-none me-2" width="20" height="20"><use xlink:href="#home"/></svg>
                 &nbsp
                 Home
@@ -109,7 +109,7 @@
                 </a>
             </li>
             <li class="pt-2">
-                <a href="#" class="nav-link text-white fs-5">
+                <a href="{% url 'core:userprofile' user.username %}" class="nav-link text-white fs-5">
                 <svg class="bi pe-none me-2" width="20" height="20"><use xlink:href="#people-circle"/></svg>
                 &nbsp
                 Profile
