@@ -22,7 +22,7 @@
 </div>
 {% endif %}
 <div id="allPosts">
-   {% for post_data in posts_data %}
+   {% for post_data in posts_page_obj %}
    <div id="post_container" class="border border-light border-end border-start border-opacity-10 pt-2">
         <p class="ms-1">{{ post_data.customname }}</p><p id="username"><a href="{% url 'core:userprofile' post_data.username %}">@ {{ post_data.username }}</a>  · {{ post_data.time }}</p>
         <p class="ms-1">{{ post_data.post.text }}</p>
@@ -40,9 +40,46 @@
         {{ post_data.likes }}</div>
     </div>
     {% endfor %}
+    <div class="position-absolute bottom-0 start-50 translate-middle">
+        <nav aria-label="...">
+            <ul class="pagination">
+                {% if posts_page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link bg-dark border-0 text-white" href="?posts_page={{ posts_page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link bg-dark border-0 text-white">Previous</a>
+                    </li>
+                {% endif %}
+    
+                {% for num in posts_page_obj.paginator.page_range %}
+                    {% if posts_page_obj.number == num %}
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link bg-dark border-1 text-white">{{ num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link bg-dark border-0 text-white" href="?posts_page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+    
+                {% if posts_page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link bg-dark border-0 text-white" href="?posts_page={{ posts_page_obj.next_page_number }}">Next</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link bg-dark border-0 text-white">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
 </div>
-<div id="followingPosts" >
-    {% for post_data in following_posts_data %}
+<div id="followingPosts" style="display: none;">
+    {% for post_data in following_posts_page_obj %}
    <div id="post_container" class="border border-light border-end border-start border-opacity-10 pt-2">
         <p class="ms-1">{{ post_data.customname }}</p><p id="username"><a href="{% url 'core:userprofile' post_data.username %}">@ {{ post_data.username }}</a>  · {{ post_data.time }}</p>
         <p class="ms-1">{{ post_data.post.text }}</p>
@@ -60,5 +97,42 @@
         {{ post_data.likes }}</div>
     </div>
     {% endfor %}
+    <div class="position-absolute bottom-0 start-50 translate-middle">
+        <nav aria-label="...">
+            <ul class="pagination">
+                {% if following_posts_page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link bg-dark border-0 text-white" href="?following_posts_page={{ following_posts_page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link bg-dark border-0 text-white">Previous</a>
+                    </li>
+                {% endif %}
+    
+                {% for num in following_posts_page_obj.paginator.page_range %}
+                    {% if following_posts_page_obj.number == num %}
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link bg-dark border-1 text-white">{{ num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link bg-dark border-0 text-white" href="?following_posts_page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+    
+                {% if following_posts_page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link bg-dark border-0 text-white" href="?following_posts_page={{ following_posts_page_obj.next_page_number }}">Next</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link bg-dark border-0 text-white">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
 </div>
 {% endblock %}
