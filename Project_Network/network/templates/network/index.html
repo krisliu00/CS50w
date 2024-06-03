@@ -21,10 +21,10 @@
     </form>
 </div>
 {% endif %}
-<div id="allPosts">
+<div id="allPosts" class="post_container">
    {% for post_data in posts_page_obj %}
-   <div id="post_container" class="border border-light border-end border-start border-opacity-10 pt-2">
-        <p class="ms-1">{{ post_data.customname }}</p><p id="username"><a href="{% url 'core:userprofile' post_data.username %}">@ {{ post_data.username }}</a>  · {{ post_data.time }}</p>
+   <div class="border border-light border-end border-start border-opacity-10 pt-2 text-white">
+        <p class="ms-1" id="username">{{ post_data.customname }}&nbsp<a href="{% url 'core:userprofile' post_data.username %}">@ {{ post_data.username }}</a>  · {{ post_data.time }}</p>
         <p class="ms-1">{{ post_data.post.text }}</p>
        {% if post_data.image_filenames %}
        {% for image in post_data.image_filenames %}
@@ -37,7 +37,8 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
         <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
         </svg>
-        {{ post_data.likes }}</div>
+        {{ post_data.likes }}
+        </div>
     </div>
     {% endfor %}
     <div class="position-absolute bottom-0 start-50 translate-middle">
@@ -78,10 +79,10 @@
         </nav>
     </div>
 </div>
-<div id="followingPosts" style="display: none;">
+<div id="followingPosts" style="display: none;" class="post_container" >
     {% for post_data in following_posts_page_obj %}
-   <div id="post_container" class="border border-light border-end border-start border-opacity-10 pt-2">
-        <p class="ms-1">{{ post_data.customname }}</p><p id="username"><a href="{% url 'core:userprofile' post_data.username %}">@ {{ post_data.username }}</a>  · {{ post_data.time }}</p>
+   <div class="border border-light border-end border-start border-opacity-10 pt-2 text-white">
+        <p class="ms-1">{{ post_data.customname }}&nbsp<a href="{% url 'core:userprofile' post_data.username %}">@ {{ post_data.username }}</a>  · {{ post_data.time }}</p>
         <p class="ms-1">{{ post_data.post.text }}</p>
        {% if post_data.image_filenames %}
        {% for image in post_data.image_filenames %}
