@@ -9,7 +9,7 @@ from .util import save_images, post_images, time_setting
 from core.models import CustomUser
 from django.core.paginator import Paginator
 
-def get_post_data(post, user_instance):
+def get_post_data(post, user_instance, request_user):
     username = user_instance.username
     customname = user_instance.custom_name
     createtime = post.create_time
@@ -17,7 +17,8 @@ def get_post_data(post, user_instance):
     likes = post.likes if post.likes is not None else 0
     images_path = post_images(username, post)
     images_filenames = os.listdir(images_path) if images_path else []
-    
+    is_creator = post.is_creator(request_user)
+
     return {
         'post': post,
         'imagepath': images_path,
@@ -25,7 +26,8 @@ def get_post_data(post, user_instance):
         'customname': customname,
         'image_filenames': images_filenames,
         'time': time,
-        'likes': likes
+        'likes': likes,
+        'is_creator': is_creator
     }
 
 def index(request):
@@ -44,35 +46,38 @@ def index(request):
         pass
 
     following_posts_data = []
+    following_posts_page_obj = None
+    
     if request.user.is_authenticated:
         current_user_profile = get_object_or_404(UserProfile, user=request.user)
         following_users = current_user_profile.following.all()
-        
-        for following_user_profile in following_users:
-            following_user = following_user_profile.user
-            post_instances = Posts.objects.filter(user=following_user)
 
-            for post in post_instances:
-                following_posts_data.append(get_post_data(post, following_user))
+        if following_users:
+            for following_user_profile in following_users:
+                following_user = following_user_profile.user
+                post_instances = Posts.objects.filter(user=following_user)
+
+                for post in post_instances:
+                    following_posts_data.append(get_post_data(post, following_user, request.user))
+
+            following_posts_paginator = Paginator(following_posts_data, 10)
+            following_posts_page_number = request.GET.get('following_posts_page')
+            following_posts_page_obj = following_posts_paginator.get_page(following_posts_page_number)
 
     posts = Posts.objects.all()
     posts_data = []
     for post in posts:
         user_instance = CustomUser.objects.get(id=post.user_id)
-        posts_data.append(get_post_data(post, user_instance))
+        posts_data.append(get_post_data(post, user_instance, request.user))
 
     posts_paginator = Paginator(posts_data, 10) 
-    following_posts_paginator = Paginator(following_posts_data, 10)
-
     posts_page_number = request.GET.get('posts_page')
-    following_posts_page_number = request.GET.get('following_posts_page')
-
     posts_page_obj = posts_paginator.get_page(posts_page_number)
-    following_posts_page_obj = following_posts_paginator.get_page(following_posts_page_number)
-
+    
+    
     return render(request, "network/index.html", {
         'posts_page_obj': posts_page_obj,
-        'following_posts_page_obj': following_posts_page_obj
+        'following_posts_page_obj': following_posts_page_obj,
     })
 
 
