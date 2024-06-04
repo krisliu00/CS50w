@@ -2,6 +2,8 @@ body {
     min-height: 100vh;
     min-height: -webkit-fill-available;
     background-color: #212529;
+    margin: 0;
+    padding: 0;
   }
   
   html {
@@ -11,11 +13,10 @@ body {
   main {
     height: 100vh;
     height: -webkit-fill-available;
-    max-height: 100vh;
     overflow-x: auto;
     overflow-y: hidden;
   }
-  
+
   .dropdown-toggle { outline: 0; }
   
   .btn-toggle {

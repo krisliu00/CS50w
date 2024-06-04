@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const usernameElement = document.getElementById('username');
     const profilePhoto = document.getElementById('userphoto_container');
     const followButton = document.getElementById('follow');
+    
 
 
     function getCookie(name) {
@@ -22,6 +23,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return cookieValue;
     }
+
+    function togglePosts(showFollowing) {
+
+        if (showFollowing) {
+            document.getElementById('allPosts').style.display = 'none';
+            document.getElementById('followingPosts').style.display = 'block';
+        } else {
+            document.getElementById('allPosts').style.display = 'block';
+            document.getElementById('followingPosts').style.display = 'none';
+        }
+    }
+
+    document.getElementById('homeLink').addEventListener('click', function(event) {
+        event.preventDefault();
+        togglePosts(false);
+    });
+
+    document.getElementById('followingPosts_link').addEventListener('click', function(event) {
+        event.preventDefault();
+        togglePosts(true);
+    });
+
+    togglePosts(false);
+
+
 
     if (followButton) {
         const profileUsername = followButton.getAttribute('data-hidden-value');

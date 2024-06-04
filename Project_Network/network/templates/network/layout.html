@@ -61,17 +61,10 @@
             <hr>
             <ul class="nav nav-pills flex-column mb-auto py-1 pe-1">
             <li class="nav-item pt-2">
-                <a href="{% url 'network:index' %}" class="nav-link active fs-5" aria-current="page">
+                <a href="{% url 'network:index' %}" class="nav-link active fs-5" aria-current="page" id="homeLink">
                 <svg class="bi pe-none me-2" width="20" height="20"><use xlink:href="#home"/></svg>
                 &nbsp
                 Home
-                </a>
-            </li>
-            <li class="pt-2">
-                <a href="#" class="nav-link text-white fs-5">
-                <svg class="bi pe-none me-2" width="20" height="20"><use xlink:href="#Explore"/></svg>
-                &nbsp
-                Explore
                 </a>
             </li>
             {% if not user.is_authenticated %}
@@ -91,6 +84,13 @@
             </li>
             {% endif %}
             {% if user.is_authenticated %}
+            <li class="pt-2">
+                <a href="#" class="nav-link text-white fs-5" id="followingPosts_link">
+                <svg class="bi pe-none me-2" width="20" height="20"><use xlink:href="#Explore"/></svg>
+                &nbsp
+                Following
+                </a>
+            </li>
             <li class="pt-2">
                 <a href="#" class="nav-link text-white fs-5 ">
                 <svg class="bi pe-none me-2" width="20" height="20"><use xlink:href="#Notifications"/>
@@ -134,32 +134,11 @@
         </div>
 
         </main>
-        <span class="border border-light border-end border-start border-opacity-10 rounded-3 position-relative" style="width: 30%; height: 100vh; ">
+        <span class="border border-light border-end border-start border-opacity-10 rounded-3 position-relative" id="content_container" style="width: 30%; height: auto;">
             <div class="inner-content text-white d-flex justify-content-center flex-column">
                 {% block body %}
                 {% endblock %}
             </div>
-            <!-- <div class="position-absolute bottom-0 start-50 translate-middle">
-            <nav aria-label="...">
-                <ul class="pagination">
-                  <li class="page-item">
-                    <a class="page-link bg-dark border-0 text-white">Previous</a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link bg-dark border-0 text-white" href="#">1</a>
-                </li>
-                  <li class="page-item active" aria-current="page">
-                    <a class="page-link bg-dark border-1 text-white" href="#">2</a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link bg-dark border-0 text-white" href="#">3</a></li>
-                  <li class="page-item">
-                    <a class="page-link bg-dark border-0 text-white" href="#">Next</a>
-                  </li>
-                  <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#compose_post" aria-expanded="false" aria-controls="compose_post">Post</button>
-                </ul>
-              </nav>
-            </div> -->
         </span>
     </div>
     </body>

@@ -7,11 +7,12 @@ from django.urls import reverse
 from .models import CustomUser, UserProfile
 from network.models import Posts
 from django.contrib.auth import authenticate
-from network.util import save_profile_photo
+from network.util import save_profile_photo, post_images, time_setting
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 import json
+import os
 
 
 
@@ -71,7 +72,35 @@ def UserProfile_view(request, username):
     current_user = request.user
     profile_user = CustomUser.objects.get(username=username)
     profile_user_instances = Posts.objects.filter(user_id=profile_user.id)
+    posts_data = []
+    
+    for post in profile_user_instances:
 
+        username = profile_user.username
+        customname = profile_user.custom_name
+        images_path = post_images(username, post)
+        images_filenames = [] 
+        likes = post.likes
+        createtime = post.create_time
+        time = time_setting(createtime)
+
+        if likes is None:
+            likes = 0
+        
+        if images_path is not None:
+
+            images_filenames = os.listdir(images_path)
+
+        posts_data.append({
+        'post': post,
+        'imagepath': images_path,
+        'image_filenames': images_filenames,
+        'time': time,
+        'likes': likes,
+        'username': username,
+        'customname': customname
+    })
+        
     try:
         user_profile = UserProfile.objects.get(user_id=profile_user.id)
 
@@ -93,7 +122,7 @@ def UserProfile_view(request, username):
     return render(request, "core/userprofile.html", {
         'current_user': current_user,
         'profile_user': profile_user,
-        'profile_user_instances': profile_user_instances,
+        'posts_data': posts_data,
         'following_count': following_count,
         'follower_count': follower_count,
         'is_following': is_following
