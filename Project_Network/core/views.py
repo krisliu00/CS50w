@@ -83,9 +83,7 @@ def UserProfile_view(request, username):
         likes = post.likes
         createtime = post.create_time
         time = time_setting(createtime)
-
-        if likes is None:
-            likes = 0
+        likes = post.likes if post.likes is not None else 0
         
         if images_path is not None:
 
