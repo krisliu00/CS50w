@@ -78,25 +78,19 @@ def UserProfile_view(request, username):
 
         username = profile_user.username
         customname = profile_user.custom_name
-        images_path = post_images(username, post)
-        images_filenames = [] 
         likes = post.likes
+        id = post.id
         createtime = post.create_time
         time = time_setting(createtime)
         likes = post.likes if post.likes is not None else 0
-        
-        if images_path is not None:
-
-            images_filenames = os.listdir(images_path)
 
         posts_data.append({
         'post': post,
-        'imagepath': images_path,
-        'image_filenames': images_filenames,
         'time': time,
         'likes': likes,
         'username': username,
-        'customname': customname
+        'customname': customname,
+        'id': id
     })
         
     try:

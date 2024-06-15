@@ -2,12 +2,15 @@ import os
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse
 from .models import Posts
 from core.models import UserProfile
-from .util import save_images, post_images, time_setting
+from .util import time_setting
 from core.models import CustomUser
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
+import json
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 
 def get_post_data(post, user_instance, request_user):
     username = user_instance.username
@@ -15,18 +18,16 @@ def get_post_data(post, user_instance, request_user):
     createtime = post.create_time
     time = time_setting(createtime)
     likes = post.likes if post.likes is not None else 0
-    images_path = post_images(username, post)
-    images_filenames = os.listdir(images_path) if images_path else []
     is_creator = post.is_creator(request_user)
+    id = post.id
 
     return {
         'post': post,
-        'imagepath': images_path,
         'username': username,
         'customname': customname,
-        'image_filenames': images_filenames,
         'time': time,
         'likes': likes,
+        'id': id,
         'is_creator': is_creator
     }
 
@@ -34,14 +35,9 @@ def index(request):
 
     if request.method == "POST":
         text = request.POST.get("text")
-        images = request.FILES.getlist("image")
         user = request.user
         post = Posts.objects.create(user=user, text=text)
         post.save()
-        if images:
-            save_images(images, user, post)
-
-        return HttpResponseRedirect(reverse("network:index"))
     else:
         pass
 
@@ -81,5 +77,40 @@ def index(request):
     })
 
 
+@require_http_methods(["POST"])
+@login_required
+def likes_api(request, post_id):
+
+    try:
+        post = Posts.objects.get(id=post_id)
+        data = json.loads(request.body)
+        action = data.get('action')
+        
+        if action == 'like':
+            post.likes = (post.likes or 0) + 1
+        elif action == 'unlike' and post.likes > 0:
+            post.likes -= 1
+        
+        post.save()
+        return JsonResponse({"success": True, "likes": post.likes})
+    except Posts.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Post not found"}, status=404)
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
 
 
+@login_required
+def edit_post_api(request, post_id):
+    try:
+        post = Posts.objects.get(id=post_id)
+        if not post.is_creator(request.user):
+            return JsonResponse({"success": False, "error": "You do not have permission to edit this post"}, status=403)
+        
+        data = json.loads(request.body)
+        post.text = data.get('text', post.text)
+        post.save()
+        return JsonResponse({"success": True, "text": post.text})
+    except Posts.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Post not found"}, status=404)
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=500)

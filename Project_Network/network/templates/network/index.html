@@ -7,42 +7,24 @@
         {% csrf_token %}
         <textarea class="form-control text-bg-dark border-0" name="text" id="floatingTextarea" style="height: 20vh;"></textarea>
         <hr class="w-100">
-        <div id="img_thumb" class="d-flex"></div>
         <span class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <label for="inputGroupFile01" class="input-group-text custom-file-upload text-bg-dark border-0 p-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-image" viewBox="0 0 16 16" style="cursor: pointer;">
-                    <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
-                    <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z"/>
-                </svg>
-            </label>
-            <input type="file" class="form-control" id="inputGroupFile01" name="image" style="display: none;" multiple accept=".jpg,.jpeg,.png">
             <button id="postSubmit" class="btn btn-primary disabled p-2" type="submit">Post</button>
         </span>
     </form>
 </div>
 {% endif %}
 <div id="allPosts" class="post_container">
-    <div class="border border-light border-end border-start border-opacity-10 pt-2 text-white d-flex justify-content-center flex-column">
+   <div class="border border-light border-end border-start border-opacity-10 pt-2 text-white d-flex justify-content-center flex-column">
    {% for post_data in posts_page_obj %}
         <p class="ms-1" id="username">{{ post_data.customname }}&nbsp<a href="{% url 'core:userprofile' post_data.username %}">@ {{ post_data.username }}</a>  · {{ post_data.time }}</p>
         <p class="ms-1">{{ post_data.post.text }}</p>
-       {% if post_data.image_filenames %}
-       {% for image in post_data.image_filenames %}
-       <div id="imgcontainer" class="border border-light border-end border-start border-opacity-10 rounded-4 d-flex justify-content-center">
-       <img src="{{ MEDIA_URL }}Post_Image/{{ post_data.username }}/{{ post_data.post.id }}/{{ image }}" alt="Post Image">
-       </div>
-       {% endfor %}
-       {% endif %}    
         <div class="ms-5 my-2 d-flex justify-content-evenly">
-        <div>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+        <div data-post-id="{{ post_data.id }}" data-is-creator="{{ post_data.is_creator }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16" style="cursor: pointer;" id="like_button">
             <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
             </svg>
-            {{ post_data.likes }}
+            <span id="likes-count-{{ post_data.id }}">{{ post_data.likes }}</span>
         </div>
-        {% if post_data.is_creator %}
-       <button id="edit_post_button" class="btn btn-primary disabled p-2">Edit</button>
-       {% endif %} 
         </div>
     {% endfor %}
     </div>
@@ -90,13 +72,6 @@
         {% for post_data in following_posts_page_obj %}
             <p class="ms-1">{{ post_data.customname }}&nbsp<a href="{% url 'core:userprofile' post_data.username %}">@ {{ post_data.username }}</a> · {{ post_data.time }}</p>
             <p class="ms-1">{{ post_data.post.text }}</p>
-            {% if post_data.image_filenames %}
-                {% for image in post_data.image_filenames %}
-                <div id="imgcontainer" class="border border-light border-end border-start border-opacity-10 rounded-4 d-flex justify-content-center">
-                    <img src="{{ MEDIA_URL }}Post_Image/{{ post_data.username }}/{{ post_data.post.id }}/{{ image }}" alt="Post Image">
-                </div>
-                {% endfor %}
-            {% endif %}
             <div class="ms-5 my-2 d-flex justify-content-center w-50">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
                     <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>

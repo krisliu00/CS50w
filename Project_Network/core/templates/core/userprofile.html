@@ -35,12 +35,7 @@
    <div id="post_container" class="border border-light border-end border-start border-opacity-10 pt-2">
         <p class="ms-1">{{ post_data.customname }}</p><p id="username"><a href="{% url 'core:userprofile' post_data.username %}">@ {{ post_data.username }}</a>  · {{ post_data.time }}</p>
         <p class="ms-1">{{ post_data.post.text }}</p>
-       {% if post_data.image_filenames %}
-       {% for image in post_data.image_filenames %}
-       <div id="imgcontainer" class="border border-light border-end border-start border-opacity-10 rounded-4 d-flex justify-content-center">
-       <img src="{{ MEDIA_URL }}Post_Image/{{ post_data.username }}/{{ post_data.post.id }}/{{ image }}" alt="Post Image">
-       {% endfor %}
-       {% endif %}    
+        <button id="edit_post_button" data-post-id="{{ post_data.id }}" class="btn btn-primary p-2">Edit</button>
         </div>
         <div class="ms-5 my-2 d-flex justify-content-center w-50">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">

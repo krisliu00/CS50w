@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const usernameElement = document.getElementById('username');
     const profilePhoto = document.getElementById('userphoto_container');
     const followButton = document.getElementById('follow');
+    const editPostButton = document.getElementById('edit_post_button');
+    const likeButton = document.getElementById('like_button');
     
 
 
@@ -47,7 +49,54 @@ document.addEventListener('DOMContentLoaded', function() {
 
     togglePosts(false);
 
+    if (editPostButton) {
+        let myPostContainer = document.getElementById('post_content');
+        editPostButton.addEventListener("click", (event) => {
 
+        });
+    }
+
+    if (likeButton) {
+    document.querySelectorAll('.bi-heart').forEach(svg => {
+        svg.addEventListener('click', function(event) {
+            const postId = event.target.closest('div').dataset.postId;
+            const isCreator = event.target.closest('div').dataset.isCreator === 'true';
+            const action = event.target.classList.contains('liked') ? 'unlike' : 'like';
+
+            if (isCreator) {
+                return;
+            }
+
+            fetch(`/posts/${postId}/like/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ action: action })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+    
+                    if (action === 'like') {
+                        event.target.classList.add('liked');
+                    } else {
+                        event.target.classList.remove('liked');
+                    }
+                    const likesCount = document.querySelector(`#likes-count-${postId}`);
+                    likesCount.textContent = data.likes;
+                } else {
+                    alert(`Error updating likes: ${data.error}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating likes.');
+            });
+        });
+    });
+}
 
     if (followButton) {
         const profileUsername = followButton.getAttribute('data-hidden-value');
