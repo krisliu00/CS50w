@@ -2,7 +2,7 @@ import os
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from .models import Posts
+from .models import Posts, PostLike
 from core.models import UserProfile
 from .util import time_setting
 from core.models import CustomUser
@@ -17,7 +17,7 @@ def get_post_data(post, user_instance, request_user):
     customname = user_instance.custom_name
     createtime = post.create_time
     time = time_setting(createtime)
-    likes = post.likes if post.likes is not None else 0
+    likes = post.like_count()
     is_creator = post.is_creator(request_user)
     id = post.id
 
@@ -87,12 +87,13 @@ def likes_api(request, post_id):
         action = data.get('action')
         
         if action == 'like':
-            post.likes = (post.likes or 0) + 1
-        elif action == 'unlike' and post.likes > 0:
-            post.likes -= 1
+            PostLike.objects.create(user=request.user, post=post)
+        elif action == 'unlike':
+            PostLike.objects.filter(user=request.user, post=post).delete()
         
-        post.save()
-        return JsonResponse({"success": True, "likes": post.likes})
+        like_count = post.like_count()
+        return JsonResponse({"success": True, "likes": like_count})
+    
     except Posts.DoesNotExist:
         return JsonResponse({"success": False, "error": "Post not found"}, status=404)
     except Exception as e:

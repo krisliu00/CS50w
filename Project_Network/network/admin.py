@@ -3,7 +3,7 @@ from .models import Posts
 
 class PostsAdmin(admin.ModelAdmin):
     model = Posts
-    list_display = ('text', 'user_id', 'likes', 'create_time')
+    list_display = ('text', 'user_id', 'create_time')
     list_filter = ('user_id', 'create_time')
     search_fields = ('user_id', 'create_time')
 

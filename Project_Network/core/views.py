@@ -78,7 +78,7 @@ def UserProfile_view(request, username):
 
         username = profile_user.username
         customname = profile_user.custom_name
-        likes = post.likes
+        likes = post.like_count()
         id = post.id
         createtime = post.create_time
         time = time_setting(createtime)
